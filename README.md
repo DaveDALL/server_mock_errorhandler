@@ -29,13 +29,13 @@ CustomizedError.createError({
 
 ```
 
-Por otro lado, a fin de que el middleware de errores funcione correctamente, en ves de estar ubicado dentro del index.js del proyecto; se coloca dentro de cada controlador en el catch de la función asíncrona.
+Por otro lado, a fin de que el middleware de errores funcione correctamente, se agrega el parámetro next en cada ruta de los controladores, y dentro de cada catch se ejecuta como next(err).
 
 ```javascript
 
 catch(err) {
         console.log('\x1b[31mInformación del Error\n' + err + '\n\x1b[33m[code:] ' + err.code + '\n\x1b[32m[casue:] ' + err.cause + '\x1b[0m')
-        return errorHandler(err, req, res)
+        next(err)
     }
 
 ```

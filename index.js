@@ -18,6 +18,7 @@ import githubRouter from './src/routers/github.router.js'
 import userRouter from './src/routers/user.router.js'
 import chatRouter from './src/routers/chat.router.js'
 import mockRouter from './src/mocks/product/product.mock.router.js'
+import errorMiddleware from './src/errorMiddleware/controlError.middleware.js'
 import __dirname from './dirPath.js'
 const app = express()
 const server = http.createServer(app)
@@ -62,6 +63,8 @@ app.use('/mockingproducts', mockRouter)
 //Auth Routers
 app.use('/', authRouter)
 app.use ('/auth', githubRouter)
+
+app.use(errorMiddleware)
 
 server.listen(PORT, () => {
     console.log(`Server Runnig at port ${PORT}`)

@@ -31,7 +31,7 @@ const conditionalSearchProductsController = async (req, res) => {
     }
 }
 
-const searchProductByIdController = async (req, res) => {
+const searchProductByIdController = async (req, res, next) => {
     try {
         let {pid} = req.params
         if(!pid) {
@@ -55,11 +55,11 @@ const searchProductByIdController = async (req, res) => {
         }
     }catch(err) {
         console.log('\x1b[31mNo es posible crear el producto\n' + err + '\n\x1b[33m[code:] ' + err.code + '\n\x1b[32m[casue:] ' + err.cause + '\x1b[0m')
-        return errorHandler(err, req, res)
+        next(err)
     }
 }
 
-const newProductController = async (req, res) => {
+const newProductController = async (req, res, next) => {
     let newProduct = req.body
     try {
         let {code, title, description, thumbnails, price, stock, category} = newProduct
@@ -84,12 +84,12 @@ const newProductController = async (req, res) => {
         }
     }catch(err) {
         console.log('\x1b[31mNo es posible crear el producto\n' + err + '\n\x1b[33m[code:] ' + err.code + '\n\x1b[32m[casue:] ' + err.cause + '\x1b[0m')
-         return errorHandler(err, req, res)
+        next(err) 
     }
     
 }
 
-const productUpdateController = async (req, res) => {
+const productUpdateController = async (req, res, next) => {
     let productToUpdate = req.body
     try {
         let {_id, code, title, description, thumbnails, price, stock, category} = productToUpdate
@@ -114,11 +114,11 @@ const productUpdateController = async (req, res) => {
         }  
     }catch(err) {
         console.log('\x1b[31mNo es posible crear el producto\n' + err + '\n\x1b[33m[code:] ' + err.code + '\n\x1b[32m[casue:] ' + err.cause + '\x1b[0m')
-        return errorHandler(err, req, res)
+        next(err)
     }
 }
 
-const deleteProductController = async (req, res) => {
+const deleteProductController = async (req, res, next) => {
     try {
         let {pid} = req.params
         if(!pid) {
@@ -142,7 +142,7 @@ const deleteProductController = async (req, res) => {
         }
     }catch(err) {
         console.log('\x1b[31mNo es posible crear el producto\n' + err + '\n\x1b[33m[code:] ' + err.code + '\n\x1b[32m[casue:] ' + err.cause + '\x1b[0m')
-        return errorHandler(err, req, res)
+        next(err)
     }
 }
 

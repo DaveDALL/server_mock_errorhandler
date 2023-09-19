@@ -5,7 +5,7 @@ import EError from '../utils/errorHandler/errorHandler.enums.js'
 import { generateErrorInfo } from '../utils/errorHandler/errorHandler.info.js'
 const { getUserByEmailService } = userService
 
-const getUserByEmailController = async (req, res) => {
+const getUserByEmailController = async (req, res, next) => {
     try{
         let {mail} = req.body
         if(!mail) {
@@ -30,7 +30,7 @@ const getUserByEmailController = async (req, res) => {
         
     }catch(err) {
         console.log('\x1b[31mNo es posible obtener al usuario con el servicio\n' + err + '\n\x1b[33m[code:] ' + err.code + '\n\x1b[32m[casue:] ' + err.cause + '\x1b[0m')
-        return errorHandler(err, req, res)
+        next(err)
     }
 }
 

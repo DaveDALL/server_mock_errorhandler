@@ -5,7 +5,7 @@ import EError from '../utils/errorHandler/errorHandler.enums.js'
 import { generateErrorInfo } from '../utils/errorHandler/errorHandler.info.js'
 const {authRegistrationService, authLoginService} = authService
 
-const authRegistrationController = async (req, res) => {
+const authRegistrationController = async (req, res, next) => {
     try {
         let user = req.body
         if(!user.userName || !user.lastName || !user.userMail || !user.userPassword) {
@@ -20,7 +20,7 @@ const authRegistrationController = async (req, res) => {
         res.redirect('/')
     }catch(err) {
         console.log('\x1b[31mNo es posible crear el usuario\n' + err + '\n\x1b[33m[code:] ' + err.code + '\n\x1b[32m[casue:] ' + err.cause + '\x1b[0m')
-        return errorHandler(err, req, res)
+        next(err)
     }
 }
 

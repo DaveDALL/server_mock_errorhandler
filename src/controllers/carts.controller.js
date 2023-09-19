@@ -5,7 +5,7 @@ import EError from '../utils/errorHandler/errorHandler.enums.js'
 import { generateErrorInfo } from '../utils/errorHandler/errorHandler.info.js'
 const {getCartByIdService, newCartService, updateCartService, delProductFromCartService, deleteCartService, purchaseCartService} = cartService
 
-const getCartByIdController = async (req, res) => {
+const getCartByIdController = async (req, res, next) => {
     try {
         let {cid} = req.params
         if(!cid) {
@@ -29,11 +29,11 @@ const getCartByIdController = async (req, res) => {
         }
     }catch(err) {
         console.log('\x1b[31mNo es posible obtener el cart con el servicio\n' + err + '\n\x1b[33m[code:] ' + err.code + '\n\x1b[32m[casue:] ' + err.cause + '\x1b[0m')
-        return errorHandler(err, req, res)
+        next(err)
     }
 }
 
-const newCartController = async (req, res) => {
+const newCartController = async (req, res, next) => {
     try{
         let cartCreatedResult = await newCartService()
         if(cartCreatedResult) {
@@ -49,11 +49,11 @@ const newCartController = async (req, res) => {
         
     }catch(err) {
         console.log('\x1b[31mNo es posible crear el cart con el servicio\n' + err + '\n\x1b[33m[code:] ' + err.code + '\n\x1b[32m[casue:] ' + err.cause + '\x1b[0m')
-        return errorHandler(err, req, res)
+        next(err)
     }
 }
 
-const updateCartController = async (req, res) => {
+const updateCartController = async (req, res, next) => {
     try {
         let {cid} = req.params
         let {productId, qty} = req.body
@@ -78,11 +78,11 @@ const updateCartController = async (req, res) => {
         }
     }catch(err) {
         console.log('\x1b[31mNo es posible actualizar el cart con el servicio\n' + err + '\n\x1b[33m[code:] ' + err.code + '\n\x1b[32m[casue:] ' + err.cause + '\x1b[0m')
-        return errorHandler(err, req, res)
+        next(err)
     }
 }
 
-const delProductFromCartController = async (req, res) => {
+const delProductFromCartController = async (req, res, next) => {
     try {
         let {cid, pid} = req.params
         if(!cid || !pid) {
@@ -106,11 +106,11 @@ const delProductFromCartController = async (req, res) => {
         }
     }catch(err) {
         console.log('\x1b[31mNo es posible borrar el producto con el servicio\n' + err + '\n\x1b[33m[code:] ' + err.code + '\n\x1b[32m[casue:] ' + err.cause + '\x1b[0m')
-        return errorHandler(err, req, res)
+        next(err)
     }
 }
 
-const deleteCartController = async (req, res) => {
+const deleteCartController = async (req, res, next) => {
     try {
         let {cid} = req.params
         if(!cid) {
@@ -134,11 +134,11 @@ const deleteCartController = async (req, res) => {
         }
     }catch(err) {
         console.log('\x1b[31mNo es posible borrar el cart con el servicio\n' + err + '\n\x1b[33m[code:] ' + err.code + '\n\x1b[32m[casue:] ' + err.cause + '\x1b[0m')
-        return errorHandler(err, req, res)
+        next(err)
     }
 }
 
-const purchaseCartController = async (req, res) => {
+const purchaseCartController = async (req, res, next) => {
     try{
         let {cid} = req.params
         if(!cid) {
@@ -162,7 +162,7 @@ const purchaseCartController = async (req, res) => {
         }
     }catch(err) {
         console.log('\x1b[31mNo es posible crear el ticket con el servicio\n' + err + '\n\x1b[33m[code:] ' + err.code + '\n\x1b[32m[casue:] ' + err.cause + '\x1b[0m')
-        return errorHandler(err, req, res)
+        next(err)
     }
 }
 
