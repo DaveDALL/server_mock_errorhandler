@@ -1,10 +1,9 @@
 import userService from '../services/user.service.js'
-import handleError from '../errorMiddleware/controlError.middleware.js'
+import errorHandler from '../errorMiddleware/controlError.middleware.js'
 import CustomizedError from '../utils/errorHandler/errorHandler.customErrors.js'
 import EError from '../utils/errorHandler/errorHandler.enums.js'
 import { generateErrorInfo } from '../utils/errorHandler/errorHandler.info.js'
 const { getUserByEmailService } = userService
-const { errorHandler } = handleError
 
 const getUserByEmailController = async (req, res) => {
     try{

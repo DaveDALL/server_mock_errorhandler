@@ -1,10 +1,9 @@
 import productService from '../services/products.service.js'
-import handleError from '../errorMiddleware/controlError.middleware.js'
+import errorHandler from '../errorMiddleware/controlError.middleware.js'
 import CustomizedError from '../utils/errorHandler/errorHandler.customErrors.js'
 import EError from '../utils/errorHandler/errorHandler.enums.js'
 import { generateErrorInfo } from '../utils/errorHandler/errorHandler.info.js'
 const {conditionalSearchProductsService, searchProductByIdService, newProductService, productUpdateService, deleteProductService} = productService
-const { errorHandler } = handleError
 
 const conditionalSearchProductsController = async (req, res) => {
     let conditions = req.query
@@ -85,7 +84,7 @@ const newProductController = async (req, res) => {
         }
     }catch(err) {
         console.log('\x1b[31mNo es posible crear el producto\n' + err + '\n\x1b[33m[code:] ' + err.code + '\n\x1b[32m[casue:] ' + err.cause + '\x1b[0m')
-        return errorHandler(err, req, res)
+         return errorHandler(err, req, res)
     }
     
 }

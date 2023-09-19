@@ -1,10 +1,9 @@
 import cartService from '../services/carts.service.js'
-import handleError from '../errorMiddleware/controlError.middleware.js'
+import errorHandler from '../errorMiddleware/controlError.middleware.js'
 import CustomizedError from '../utils/errorHandler/errorHandler.customErrors.js'
 import EError from '../utils/errorHandler/errorHandler.enums.js'
 import { generateErrorInfo } from '../utils/errorHandler/errorHandler.info.js'
 const {getCartByIdService, newCartService, updateCartService, delProductFromCartService, deleteCartService, purchaseCartService} = cartService
-const { errorHandler } = handleError
 
 const getCartByIdController = async (req, res) => {
     try {

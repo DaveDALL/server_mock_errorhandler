@@ -1,10 +1,9 @@
 import authService from '../services/auth.service.js'
-import handleError from '../errorMiddleware/controlError.middleware.js'
+import errorHandler from '../errorMiddleware/controlError.middleware.js'
 import CustomizedError from '../utils/errorHandler/errorHandler.customErrors.js'
 import EError from '../utils/errorHandler/errorHandler.enums.js'
 import { generateErrorInfo } from '../utils/errorHandler/errorHandler.info.js'
 const {authRegistrationService, authLoginService} = authService
-const { errorHandler } = handleError
 
 const authRegistrationController = async (req, res) => {
     try {

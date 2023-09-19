@@ -63,8 +63,6 @@ app.use('/mockingproducts', mockRouter)
 app.use('/', authRouter)
 app.use ('/auth', githubRouter)
 
-
-
 server.listen(PORT, () => {
     console.log(`Server Runnig at port ${PORT}`)
     mongoManager.connect()
