@@ -1,4 +1,5 @@
 import DAOS from '../dao/daos.factory.js'
+import logger from '../utils/logging/factory.logger.js'
 const { UserDAO } = DAOS
 
 const getUserByEmailService = async (mail) => {
@@ -6,10 +7,12 @@ const getUserByEmailService = async (mail) => {
         let getUserResult = await UserDAO.getUserByEmail(mail)
         if(getUserResult.length > 0) {
             return getUserResult
-        } else return []
+        } else {
+            logger.debug('No fue posible encontrar el usuario en MongoDB')
+            return []
+        }
     }catch(err) {
-        console.log('Error al obtener al usuario con mongoose '+ err)
-        throw new Error('Error al obtener al usuario con mongoose ')
+        throw new Error('Error al obtener al usuario con mongoose ', {cause: err})
     }
 }
 

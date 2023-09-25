@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken'
 import DAOS from '../dao/daos.factory.js'
 import encrypt from '../../config/bcrypt.js'
 import config from '../../config/config.env.js'
+import logger from '../utils/logging/factory.logger.js'
 import { UserDTO } from '../dto/user.dto.js'
 const { passHashing, validatePass } =encrypt
 const { UserDAO, CartDAO } = DAOS
@@ -33,11 +34,17 @@ const authRegistrationService = async (user) => {
                 let createdUserResult = await UserDAO.createUser(createdUser)
                 if(createdUserResult) {
                     return createdUserResult
-                }else return {}
-            }else throw new Error('El usuario ya existe en la base de datos')
+                }else {
+                    logger.debug('No se pudo crear el usuario en MongoDB')
+                    return {}
+                }
+            }else {
+                logger.debug('El usuario ya existe en la base de datos')
+                throw new Error('El usuario ya existe en la base de datos')
+            }
         }
     }catch(err) {
-        console.log('No se pudo crear el usuario con mongoose ' + err)
+        logger.error(`No se pudo crear el usuario con mongoose ${err}`)
     }
 }
 
@@ -51,7 +58,6 @@ const authLoginService = async (user) => {
             isValidPass = true
         }else {
             foundUser = await UserDAO.getUserByEmail(userMail)
-            
             isValidPass = validatePass(userPassword, foundUser[0].userPassword)
         }
         if(foundUser.length > 0) {
@@ -63,11 +69,18 @@ const authLoginService = async (user) => {
                 let modifiedUser = DTOUser.userDTO()
                 let userInfo = {token: token, foundUser: modifiedUser}
                 return userInfo
-            } else throw new Error('El usuario no es valido')
-        }else throw new Error('El usuario no se encuentra registrado')
+            } else {
+                logger.debug('No se puedo validar el usuario')
+                throw new Error('No fue posible validar el usuario ')
+            }
+        }else {
+            logger.debug('El usuario no se encuentra registrado')
+            throw new Error('El usuario no se encuentra registrado')
+        }
         
     }catch(err) {
-        console.log('No se pudo confirmar el usuario con mongoose ' + err)
+        logger.error(`No se pudo confirmar el usuario con mongoose ${err}`)
+        throw new Error('No se pudo confirmar el usuario con mongoose ', {cause: err})
     }
 }
 

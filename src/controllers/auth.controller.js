@@ -1,5 +1,4 @@
 import authService from '../services/auth.service.js'
-import errorHandler from '../errorMiddleware/controlError.middleware.js'
 import CustomizedError from '../utils/errorHandler/errorHandler.customErrors.js'
 import EError from '../utils/errorHandler/errorHandler.enums.js'
 import { generateErrorInfo } from '../utils/errorHandler/errorHandler.info.js'
@@ -19,8 +18,9 @@ const authRegistrationController = async (req, res, next) => {
         await authRegistrationService(user)
         res.redirect('/')
     }catch(err) {
-        console.log('\x1b[31mNo es posible crear el usuario\n' + err + '\n\x1b[33m[code:] ' + err.code + '\n\x1b[32m[casue:] ' + err.cause + '\x1b[0m')
         next(err)
+        req.logger.error(`No fue posible crear el usuario en la base de datos\n${err}\n[code:] ${err.code}\n[casue:] ${err.cause}`)
+       
     }
 }
 
@@ -45,8 +45,8 @@ const authLoginController = async (req, res) => {
             res.cookie('jwtCookie', token).redirect('/products')
         }else res.redirect('/')
     }catch(err) {
-        console.log('\x1b[31mNo es posible iniciar sesion\n' + err + '\x1b[0m')
         res.redirect('/userRegistration')
+        req.logger.warning(`No fue posible inciar sesión con los datos del usuario`)   
     }
 }
 

@@ -1,4 +1,5 @@
 import DAOS from '../dao/daos.factory.js'
+import logger from '../utils/logging/factory.logger.js'
 const { TicketDAO } = DAOS
 
 const createTicketService = async (products, amount, purchaser) => {
@@ -6,10 +7,12 @@ const createTicketService = async (products, amount, purchaser) => {
         let ticketCreatedResult = await TicketDAO.createTicket(products, amount, purchaser)
         if(ticketCreatedResult) {
             return ticketCreatedResult
-        } else {}
+        } else {
+            logger.error('No se pudo crear el ticket en MongoDB')
+            return {}
+        }
     }catch(err) {
-        console.log('No fue posible crear el ticket con el servicio ' + err)
-        throw new Error('No fue posible crear el ticket con el servicio ')
+        throw new Error('No fue posible crear el ticket con el servicio ', {cause: err})
     }
 }
 
@@ -18,10 +21,12 @@ const getTicketbyId = async (tid) => {
         let ticket = await TicketDAO.getTicketbyId(tid)
         if(ticket) {
             return ticket
-        }else return {}
+        }else {
+            logger.debug('No fue posible encontrar el ticket en MongoDB')
+            return {}
+        }
     }catch(err) {
-        console.log('No fue posible obtener el ticket con el servicio ' + err)
-        throw new Error('No fue posible obtener el ticket con el servicio ')
+        throw new Error('No fue posible obtener el ticket con el servicio ', {cause: err})
     }
 }
 

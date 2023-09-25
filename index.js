@@ -19,12 +19,12 @@ import userRouter from './src/routers/user.router.js'
 import chatRouter from './src/routers/chat.router.js'
 import mockRouter from './src/mocks/product/product.mock.router.js'
 import errorMiddleware from './src/errorMiddleware/controlError.middleware.js'
+import loggerMiddleware from './src/utils/logging/logger.js'
 import __dirname from './dirPath.js'
 const app = express()
 const server = http.createServer(app)
 const io = new Server(server)
 const { PORT,  MONGO_URL, SECRET } = CONFIG
-
 
 //middleware de archivos estaticos publicos, JSON y encoding
 app.use(express.static(__dirname + '/public'))
@@ -51,6 +51,9 @@ app.use(session({
 app.use(passport.initialize())
 initializePassportGit()
 initializePassportJwt()
+
+//Logger Middleware
+app.use(loggerMiddleware)
 
 //middleware de router
 app.use('/api/products', productRouter)

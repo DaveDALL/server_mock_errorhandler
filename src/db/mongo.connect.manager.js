@@ -3,12 +3,12 @@ import CONFIG from '../../config/config.env.js'
 import CustomizedError from '../utils/errorHandler/errorHandler.customErrors.js'
 import EError from '../utils/errorHandler/errorHandler.enums.js'
 import { generateErrorInfo } from '../utils/errorHandler/errorHandler.info.js'
+import logger from '../utils/logging/factory.logger.js'
 const { MONGO_URL } = CONFIG
 
 export default {
     connect: async () => {
         return await mongoose.connect(MONGO_URL, {}).then(connection => {
-            console.log('DataBase successful connection')
             if(!connection) {
                 CustomizedError.createError({
                     name: 'Error en el usuario',
@@ -17,6 +17,10 @@ export default {
                     code: EError.DATABASE_CONECTION_ERROR
                 })
             }
-        }).catch(err => console.log('Error at Database connection ' + err))
+            logger.info('DataBase successful connection')
+
+        }).catch(err => {
+            logger.fatal(`Error at Database connection ${err}`)
+        })
     }
 }

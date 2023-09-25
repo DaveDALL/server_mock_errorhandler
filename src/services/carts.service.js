@@ -1,5 +1,6 @@
 import DAOS from '../dao/daos.factory.js'
 import ticketService from '../services/ticket.service.js'
+import logger from '../utils/logging/factory.logger.js'
 const { CartDAO, ProductDAO, UserDAO } = DAOS
 
 const getCartByIdService = async (cid) => {
@@ -7,10 +8,12 @@ const getCartByIdService = async (cid) => {
         let cart = await CartDAO.getCartById(cid)
         if(cart){
             return cart
-        }else return {}
+        }else {
+            logger.debug('No encuentra el cart en MongoDB')
+            return {}
+        }
     }catch(err) {
-        console.log('Error al obtener el cart ' + err)
-        throw new Error('Error al obtener el cart ')
+        throw new Error('Error al obtener el cart con mongoose ', {cause: err})
     }
 }
 
@@ -19,10 +22,12 @@ const newCartService = async () => {
         let cartCreatedResult = await CartDAO.createCart()
         if(cartCreatedResult) {
             return cartCreatedResult
-        }else return {}
+        }else {
+            logger.error('Error al crear el cart en MondoDB')
+            return {}
+        }
     }catch(err) {
-        console.log('Error al crear el cart ' + err)
-        throw new Error('Error al crear el cart ')
+        throw new Error('Error al crear el cart en MongoDB ', {cause: err})
     }
 }
 
@@ -31,10 +36,12 @@ const updateCartService = async (cid, productId, qty) => {
         let updatedCartResult = await CartDAO.updateCartById(cid, productId, qty)
         if(updatedCartResult) {
             return updatedCartResult
-        }else return {}
+        }else {
+            logger.error('Error al actualizar el cart en MongoDB')
+            return {}
+        }
     }catch(err) {
-        console.log('Error al actualizar el cart ' + err)
-        throw new Error('Error al actualizar el cart ')
+        throw new Error('Error al actualizar el cart en Mongo DB ', {cause: err})
     }
 }
 
@@ -43,10 +50,12 @@ const delProductFromCartService = async (cid, pid) => {
         let deletedProductResult = await CartDAO.deleteProductFromCart(cid, pid)
         if(deletedProductResult) {
             return deletedProductResult
-        }else return {}
+        }else {
+            logger.error('Error borrar el producto del Cart en MongoDB')
+            return {}
+        }
     }catch(err) {
-        console.log('Error borrar el producto del Cart ' + err)
-        throw new Error('Error borrar el producto del Cart ')
+        throw new Error('Error borrar el producto del Cart en MongoDB ', {cause: err})
     }
 }
 
@@ -55,9 +64,12 @@ const deleteCartService = async (cid) => {
         let deletedCartResult = await CartDAO.deleteCartById(cid)
         if(deletedCartResult) {
             return deletedCartResult
-        }else return {}
+        }else {
+            logger.error('No es posible borrar el cart en MongoDB')
+            return {}
+        }
     }catch(err) {
-        console.log('No es posible borrar el cart con mongoose '+ err)
+        throw new Error('Error al borrar el Cart en MongoDB ', {cause: err})
     }
 }
 
@@ -81,7 +93,7 @@ const purchaseCartService = async (cid) => {
                     await CartDAO.deleteProductFromCart(cartId, productId._id)
                 } else productsOutStock.push(productId._id)
             }catch(err) {
-                console.log('Error al actualizar el producto en MongoDB' + err)
+                throw new Error('Error al actualizar el producto o borrar el cart en MongoDB ', {cause: err})
             }
         })
         let ticketCreated = await ticketService.createTicketService(productsInStock, amount, userMail)
@@ -89,9 +101,13 @@ const purchaseCartService = async (cid) => {
             ticket = await ticketService.getTicketbyId(ticketCreated._id)
         }
         let createdTicketResult = {ticket, productsOutStock}
-        return createdTicketResult
+        if(createdTicketResult) {
+            return createdTicketResult
+        }else {
+            logger.error('Error al crear el ticket en MongoDB')
+        }
     }catch(err) {
-        console.log(err)
+        throw new Error('Error al crear el ticket en MongoDB ', {cause: err})
     }
 }
 

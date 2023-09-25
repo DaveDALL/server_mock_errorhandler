@@ -26,7 +26,7 @@ const conditionalSearchProductsController = async (req, res) => {
             nextLink: nextPageLink
         })
     }catch(err) {
-        console.log('No es posible obtener los productos desde el servicio de productos ' + err)
+        req.logger.warning(`No es posible obtener los productos desde el servicio de productos\n${err}\n[code:] ${err.code}\n[casue:] ${err.cause}`)
         res.status(500).send({status: 'error', error: 'No es posible obtener productos con mongoose'})
     }
 }
@@ -54,7 +54,7 @@ const searchProductByIdController = async (req, res, next) => {
             })
         }
     }catch(err) {
-        console.log('\x1b[31mNo es posible crear el producto\n' + err + '\n\x1b[33m[code:] ' + err.code + '\n\x1b[32m[casue:] ' + err.cause + '\x1b[0m')
+        req.logger.warning(`No es posible buscar los productos\n${err}\n[code:] ${err.code}\n[casue:] ${err.cause}`)
         next(err)
     }
 }
@@ -83,7 +83,7 @@ const newProductController = async (req, res, next) => {
             })
         }
     }catch(err) {
-        console.log('\x1b[31mNo es posible crear el producto\n' + err + '\n\x1b[33m[code:] ' + err.code + '\n\x1b[32m[casue:] ' + err.cause + '\x1b[0m')
+        req.logger.error(`No es posible crear el producto\n${err}\n[code:] ${err.code}\n[casue:] ${err.cause}`)
         next(err) 
     }
     
@@ -113,7 +113,7 @@ const productUpdateController = async (req, res, next) => {
             })
         }  
     }catch(err) {
-        console.log('\x1b[31mNo es posible crear el producto\n' + err + '\n\x1b[33m[code:] ' + err.code + '\n\x1b[32m[casue:] ' + err.cause + '\x1b[0m')
+        req.logger.warning(`No es posible actualizar el producto\n${err}\n[code:] ${err.code}\n[casue:] ${err.cause}`)
         next(err)
     }
 }
@@ -141,7 +141,7 @@ const deleteProductController = async (req, res, next) => {
             })
         }
     }catch(err) {
-        console.log('\x1b[31mNo es posible crear el producto\n' + err + '\n\x1b[33m[code:] ' + err.code + '\n\x1b[32m[casue:] ' + err.cause + '\x1b[0m')
+        req.logger.warning(`No es posible borrar el producto\n${err}\n[code:] ${err.code}\n[casue:] ${err.cause}`)
         next(err)
     }
 }

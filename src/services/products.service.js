@@ -1,4 +1,5 @@
 import DAOS from '../dao/daos.factory.js'
+import logger from '../utils/logging/factory.logger.js'
 const { ProductDAO } = DAOS
 
 const conditionalSearchProductsService = async (conditions) => {
@@ -7,11 +8,13 @@ const conditionalSearchProductsService = async (conditions) => {
         if(requiredProducts)
         {
             return requiredProducts
-        } else throw new Error('No es posible obtener los productos desde el DAO')
+        } else {
+            logger.error('No se pudieron obtener los productos en MongoDB')
+            return {}
+        }
         
     }catch(err) {
-        console.log('Error al obtener los productos desd el DAO ' + err)
-        throw new Error('Error al obtener los productos desd el DAO ')
+        throw new Error('Error al obtener los productos desd el DAO ', {cause: err})
     }
 }
 
@@ -21,10 +24,12 @@ const searchProductByIdService = async (pid) => {
         let foundProduct = await ProductDAO.getProductById(pid)
         if(foundProduct) {
             return foundProduct
-        } else return {}
+        } else {
+            logger.debug('No se encontró el producto con el ID')
+            return {}
+        }
     }catch(err) {
-        console.log('Error al buscar el producto con el ID ' + err)
-        throw new Error('Error al buscar el producto con el ID ')
+        throw new Error('Error al buscar el producto con el ID ', {cause: err})
     }
 }
 
@@ -33,10 +38,12 @@ const newProductService = async (newProduct) => {
         let productCreatedResult = await ProductDAO.createProduct(newProduct)
         if(productCreatedResult) {
             return productCreatedResult
-        }else return {}
+        }else {
+            logger.error('No fue posible crear el producto')
+            return {}
+        }
     }catch(err) {
-        console.log('No es posible crear el producto ' + err)
-        throw new Error('No es posible crear el producto ')
+        throw new Error('No es posible crear el producto en mongoose', {cause: err})
     }
 }
 
@@ -45,10 +52,12 @@ const productUpdateService = async (productToUpdate) => {
         let productUpdatedResult = await ProductDAO.updateProduct(productToUpdate)
         if(productUpdatedResult) {
             return productUpdatedResult
-        }else return {}
+        }else {
+            logger.error('No se pudo actualizar el producto en Mongo DB')
+            return {}
+        }
     }catch(err) {
-        console.log('Existe un error al tratar de actualizar el producto ' + err)
-        throw new Error('Existe un error al tratar de actualizar el producto ')
+        throw new Error('Existe un error al tratar de actualizar el producto con mongoose', {cause: err})
     }
 }
 
@@ -57,10 +66,12 @@ const deleteProductService = async (pid) => {
         let productDeletedResult = await ProductDAO.deleteProductById(pid)
         if(productDeletedResult) {
             return productDeletedResult
-        }else return {}  
+        }else {
+            logger.debug('NO se pudo borrar el producto en Mongo DB')
+            return {}
+        }  
     }catch(err) {
-        console.log('No es posible eliminar el producto con mongoose ' + err)
-        throw new Error('No es posible eliminar el producto con mongoose ')
+        throw new Error('No es posible eliminar el producto con mongoose ', {cause: err})
     }
 }
 

@@ -15,9 +15,10 @@ throw error
 
 ```
 
-Los errores pesonalizados tienen salida a través de un **console.log** que se encuentra en el catch de la función asincrona del controlador correspondiente, usando la función **generateErrorInfo** que se encuentra en el archivo **errorHandler.info.js**, de entro de la ubicación anterior, para agregar la causa de la siguiente forma:
+Los errores pesonalizados tienen salida a través de un **console.log** que se encuentra en el catch de la función asincrona del controlador correspondiente, usando la función **generateErrorInfo** que se encuentra en el archivo **errorHandler.info.js**, dentro de la ubicación anterior, para agregar la causa de la siguiente forma:
 
 Creación de error en el controller, dentro del try de la función asincrona:
+
 ```javascript
 
 CustomizedError.createError({

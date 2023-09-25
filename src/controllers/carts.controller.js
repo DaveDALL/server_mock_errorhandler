@@ -1,5 +1,4 @@
 import cartService from '../services/carts.service.js'
-import errorHandler from '../errorMiddleware/controlError.middleware.js'
 import CustomizedError from '../utils/errorHandler/errorHandler.customErrors.js'
 import EError from '../utils/errorHandler/errorHandler.enums.js'
 import { generateErrorInfo } from '../utils/errorHandler/errorHandler.info.js'
@@ -28,7 +27,7 @@ const getCartByIdController = async (req, res, next) => {
             })
         }
     }catch(err) {
-        console.log('\x1b[31mNo es posible obtener el cart con el servicio\n' + err + '\n\x1b[33m[code:] ' + err.code + '\n\x1b[32m[casue:] ' + err.cause + '\x1b[0m')
+        req.logger.warning(`No es posible obtener el cart con el servicio\n${err}\n[code:] ${err.code}\n[casue:] ${err.cause}`)
         next(err)
     }
 }
@@ -48,7 +47,7 @@ const newCartController = async (req, res, next) => {
         }
         
     }catch(err) {
-        console.log('\x1b[31mNo es posible crear el cart con el servicio\n' + err + '\n\x1b[33m[code:] ' + err.code + '\n\x1b[32m[casue:] ' + err.cause + '\x1b[0m')
+        req.logger.error(`No es posible crear el car con el servicio\n${err}\n[code:] ${err.code}\n[casue:] ${err.cause}`)
         next(err)
     }
 }
@@ -77,7 +76,7 @@ const updateCartController = async (req, res, next) => {
             })
         }
     }catch(err) {
-        console.log('\x1b[31mNo es posible actualizar el cart con el servicio\n' + err + '\n\x1b[33m[code:] ' + err.code + '\n\x1b[32m[casue:] ' + err.cause + '\x1b[0m')
+        req.logger.warning(`No es posible actualizar el car con el servicio\n${err}\n[code:] ${err.code}\n[casue:] ${err.cause}`)
         next(err)
     }
 }
@@ -105,7 +104,7 @@ const delProductFromCartController = async (req, res, next) => {
             })
         }
     }catch(err) {
-        console.log('\x1b[31mNo es posible borrar el producto con el servicio\n' + err + '\n\x1b[33m[code:] ' + err.code + '\n\x1b[32m[casue:] ' + err.cause + '\x1b[0m')
+        req.logger.warning(`No es posible borrar el producto con el servicio\n${err}\n[code:] ${err.code}\n[casue:] ${err.cause}`)
         next(err)
     }
 }
@@ -133,7 +132,7 @@ const deleteCartController = async (req, res, next) => {
             })
         }
     }catch(err) {
-        console.log('\x1b[31mNo es posible borrar el cart con el servicio\n' + err + '\n\x1b[33m[code:] ' + err.code + '\n\x1b[32m[casue:] ' + err.cause + '\x1b[0m')
+        req.logger.warning(`No es posible borrar el cart con el servicio\n${err}\n[code:] ${err.code}\n[casue:] ${err.cause}`)
         next(err)
     }
 }
@@ -161,7 +160,7 @@ const purchaseCartController = async (req, res, next) => {
             })
         }
     }catch(err) {
-        console.log('\x1b[31mNo es posible crear el ticket con el servicio\n' + err + '\n\x1b[33m[code:] ' + err.code + '\n\x1b[32m[casue:] ' + err.cause + '\x1b[0m')
+        req.logger.warning(`No es posible crear el ticket con el servicio\n${err}\n[code:] ${err.code}\n[casue:] ${err.cause}`)
         next(err)
     }
 }
