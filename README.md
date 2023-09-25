@@ -552,7 +552,7 @@ Se crea un mock de productos, el cual puede generar máximo 100 productos. La ru
 
 la función que genera los mock de productos se encuentra ubicada en la ruta **/src/utils/mocking**, deonde se encuentra el archivo **product.mock.utils.js**, El servicio, controlador y router para crear los mocks se encuentran en la ruta **/src/mocks/product**
 
-
+## WINSTON LOGGER
 
 # FIN
  
