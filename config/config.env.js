@@ -10,7 +10,7 @@ program.parse(process.argv)
 const options = program.opts()
 
 dotenv.config({
-    path: (options.mode === 'prod') ? `${__dirname}/.env.prod` : `${__dirname}/.env.develop`
+    path: (options.mode === 'prod' || options.m === 'prod') ? `${__dirname}/.env.prod` : `${__dirname}/.env.develop`
 })
 
 export default {
