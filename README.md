@@ -2,6 +2,24 @@
 
 El propósito de este proyecto es realizar un servidor completo por capas; que cuente con la posibilidad de crear un ticket de compra, y proveer del manejo de errores.
 
+## SELECCION DEL ENTORNO
+
+Para este caso se emplea la dependencia de **commander** para realizar la captura de los argumentos que se colocan despues de node y el index.js en el CLI **node index.js**.
+
+Se peude seleccionar el entorno empleando **-m** o **--mode**, y para seleccionar el entorno el argumento **dev** para desarrollo o **prod** para produccion; de forma predeterminada, si no se coloca algun argumento, el index.js se ejecuta en modo de desarrollo
+
+```javascript
+
+const program = new Command()
+
+//Selección de entorno de ejecución (dev: Development, prod: production)
+program
+    .option('-m, --mode <mode>', 'environment working mode', 'dev')
+program.parse(process.argv)
+
+```
+
+
 ## MANEJO DE ERRORES
 
 Para el caso del manejo de errores, se crea un diccionario con los error mas comunes en **/src/util/errorHandler**, con el nombre de **errorHandler.enums.js**. Se crea una clase llamada **errorHandler.customErrors.js**, ubicada en la misma ruta de carpetas; esta clase realiza una construcción personalizada del error, tomando los códigos de error del diccionario, creando un error mediante la clase **CustomizedError**, de la forma:
@@ -553,6 +571,103 @@ Se crea un mock de productos, el cual puede generar máximo 100 productos. La ru
 la función que genera los mock de productos se encuentra ubicada en la ruta **/src/utils/mocking**, deonde se encuentra el archivo **product.mock.utils.js**, El servicio, controlador y router para crear los mocks se encuentran en la ruta **/src/mocks/product**
 
 ## WINSTON LOGGER
+
+Empleando la dependencia de Winstonjs se agrega un logger a dos archivo llamados **debug.logger.js** e **info.logger.js**, mediante la técnica de factory, se selecciona uno u otro dependiendo de la variable de entorno LOGGER_TYPE, por lo si se selecciona el modo desarrollo, se selecciona el primer archivo de logger y se selecciona producción se selecciona el segundo archivo.
+
+La adición del logger se realiza de la siguiente forma:
+
+```javascript
+
+winston.loggers.add(
+    'debugLogger', // Se coloca el nombre del logger
+    {
+        levels: levelOptions.levels,
+        transports: [
+            new winston.transports.Console(),
+            new winston.transports.File()  // En caso de que se opcupe el envio del log al archivo
+        ]
+    })
+
+```
+
+Ademas de agregar las opciones de:
+
+levels: para personalizar los niveles para realizar el logging
+level: A partir de que nivel vamos a loggear, ya sea por consola o por archivo
+combine: Para realizar un formato personalizado combinado
+colorize: para asignar colores personalizados a los niveles
+timestamp: Para colocar fecha y hora
+align: Para alinear la salida del mensaje
+printf: para personalizar el formato de salida
+
+ejemplo:
+
+```javascript
+
+level: 'debug',
+format: combine(
+    colorize({colors: levelOptions.colors}),
+    timestamp({
+        format: 'DD-MM-YYYY hh:mm:ss A'
+    }),
+    align(),
+    printf(inf => `[${inf.timestamp}] ${inf.level}: ${inf.message}`)
+)
+
+```
+
+Para asignar los niveles personalizados y colores personalizados, se crea un archivo **levelOptions.logger.js**, donde se crea un objeto que se exporta, de la siguiente forma:
+
+```javascript
+
+{
+    levels: {
+        fatal: 0,
+        error: 1,
+        warning: 2,
+        info: 3,
+        http: 4,
+        debug: 5
+    },
+
+    colors: {
+        fatal: 'red',
+        error: 'orange',
+        warning: 'yellow',
+        info: 'blue',
+        http: 'green',
+        debug: 'magenta'
+    }
+}
+
+```
+
+Por lo que al final el archivo tipo factory queda como sigue, y seleccionando el archivo de acuerdo al entorno:
+
+```javascript
+
+switch(LOGGER_TYPE) {
+    case "DEBUG":
+        logger = winston.loggers.get('debugLogger')
+    break
+
+    case "INFO":
+        logger = winston.loggers.get('infoLogger')
+}
+
+```
+Este logger se puede exportar e importar hacia algún otro componente dentro de las capas de servidor y poder el logging correcpondiente; pero para el caso de los controllers se crea un middleware que estará haciendo logging de la información en http, el cual se agrega al req  y através de este middleware puede hacer el paso del logger hacia los controllers de los endpoints:
+
+```javascript
+
+const loggerMiddleware = (req, res, next) => {
+    req.logger = logger
+    req.logger.http(`${req.method} en ${req.url}`)
+    next()
+}
+
+
+```
 
 # FIN
  

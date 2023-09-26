@@ -1,11 +1,12 @@
-let fetchingUrl = 'http://localhost:8080/api/products?limit=3&pageNum=1'
-let getUserUrl = 'http://localhost:8080/api/users/currentUser'
 let products = []
 let prevLinkPage = ' '
 let nextLinkPage = ' '
 let userGot = {}
 let cartId = undefined
 let mail = window.mail
+let port = window.port
+let fetchingUrl = `http://localhost:${port}/api/products?limit=3&pageNum=1`
+let getUserUrl = `http://localhost:${port}/api/users/currentUser`
 
 const fetchingData = async (Url) => {
     try {
@@ -37,12 +38,11 @@ const fetchingAddProductToCart = async (url, pid, qty) => {
 }
 
 const fetchingUser = async (url) => {
-    console.log(url, mail)
     try {
         let response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-type': 'application/json; charset=UTF-8'
+                'Content-type': 'application/json'
             },
             body: JSON.stringify({
                 mail: mail
@@ -51,7 +51,7 @@ const fetchingUser = async (url) => {
         let getUser = await response.json()
         return getUser
     }catch(err) {
-        console.log(err)
+        console.log('No fue posible obtener el usuario' + err)
     }
 }
 
@@ -59,7 +59,7 @@ const addToCart = async (pid, status, stock) => {
     let qty = 1
     let {payload} = userGot
     cartId = payload[0].cartId
-    let putUrl = `http://localhost:8080/api/carts/${cartId}`
+    let putUrl = `http://localhost:${port}/api/carts/${cartId}`
     if(status && stock > 0) {
         let productAdded = await fetchingAddProductToCart(putUrl, pid, qty)
         alert('producto agregado con exito')
@@ -117,7 +117,7 @@ async function prevPage(prevLink) {
 function viewCart() {
     let {payload} = userGot
     cartId = payload[0].cartId
-    let cartUrl = `http://localhost:8080/carts/${cartId}`
+    let cartUrl = `http://localhost:${port}/carts/${cartId}`
     if(!cartId) {
         alert('El carrito se encuentra vacio')
     }else {

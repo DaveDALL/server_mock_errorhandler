@@ -1,3 +1,5 @@
+import CONFIG from '../../config/config.env.js'
+const {PORT} = CONFIG
 
 const userRegistrationViewController = (req, res) => {
     res.render('register', {})
@@ -16,11 +18,11 @@ const userLogoutController = (req, res) => {
 
 const productViewController = (req, res) => {
     let {userName, lastName, userMail, userRoll} = req.session
-    res.render('products', {name: userName, lastName: lastName, mail: userMail, roll: userRoll})
+    res.render('products', {name: userName, lastName: lastName, mail: userMail, roll: userRoll, port: PORT})
 }
 
 const cartViewController = (req, res) => {
-    res.status(200).render('cart', {})
+    res.status(200).render('cart', {port: PORT})
 }
 
 export default {

@@ -10,6 +10,7 @@ import initializePassportGit from './config/passportGit.config.js'
 import initializePassportJwt from './config/passportJwt.config.js'
 import mongoManager from './src/db/mongo.connect.manager.js'
 import CONFIG from './config/config.env.js'
+import logger from './src/utils/logging/factory.logger.js'
 import productRouter from './src/routers/products.router.js'
 import cartRouter from './src/routers/carts.router.js'
 import viewsRouter from './src/routers/views.router.js'
@@ -70,6 +71,6 @@ app.use ('/auth', githubRouter)
 app.use(errorMiddleware)
 
 server.listen(PORT, () => {
-    console.log(`Server Runnig at port ${PORT}`)
+    logger.info(`Server Runnig at port ${PORT}`)
     mongoManager.connect()
 })

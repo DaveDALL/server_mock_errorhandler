@@ -1,5 +1,6 @@
+let port = window.port
 const fetchingCart = async () => {
-    let cartFetchUrl = 'http://localhost:8080/api' + window.location.pathname
+    let cartFetchUrl = `http://localhost:${port}/api${window.location.pathname}`
     try {
         let response = await fetch(cartFetchUrl)
         let cartData = await response.json()
@@ -10,7 +11,7 @@ const fetchingCart = async () => {
 }
 
 const fetchToDeleteCartProduct = async (cid, pid) => {
-    let deleteProductUrl = `http://localhost:8080/api/carts/${cid}/products/${pid}`
+    let deleteProductUrl = `http://localhost:${port}/api/carts/${cid}/products/${pid}`
     try {
         let response = await fetch(deleteProductUrl, {
             method: 'DELETE',

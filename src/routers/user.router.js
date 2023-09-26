@@ -10,5 +10,3 @@ const userRouter = Router()
 userRouter.post('/currentUser', passport.authenticate('jwtAuth', {session:false}), isUserRollValid, getUserByEmailController)
 
 export default userRouter
-
-//

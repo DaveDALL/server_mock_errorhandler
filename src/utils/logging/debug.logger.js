@@ -18,18 +18,3 @@ winston.loggers.add(
                     printf(inf => `[${inf.timestamp}] ${inf.level}: ${inf.message}`)
                 )})]
     })
-
-// export default winston.createLogger({
-//     levels: levelOptions.levels,
-//     transports: [
-//         new winston.transports.Console({
-//             level: 'debug',
-//             format: combine(
-//                 colorize({colors: levelOptions.colors}),
-//                 timestamp({
-//                     format: 'DD-MM-YYYY hh:mm:ss'
-//                 }),
-//                 align(),
-//                 printf(inf => `[${inf.timestamp}] ${inf.level}: ${inf.message}`)
-//             )})]
-// })
