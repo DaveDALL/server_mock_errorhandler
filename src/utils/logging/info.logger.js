@@ -13,7 +13,7 @@ winston.loggers.add(
             format: combine(
                 colorize({colors: levelOptions.colors}),
                 timestamp({
-                    format: 'DD-MM-YYYY hh:mm:ss'
+                    format: 'DD-MM-YYYY hh:mm:ss A'
                 }),
                 align(),
                 printf(inf => `[${inf.timestamp}] ${inf.level}: ${inf.message}`)
@@ -23,6 +23,7 @@ winston.loggers.add(
             level: 'error',
             filename: './errors.log',
             format: combine(
+                colorize({colors: levelOptions.colors}),
                 timestamp({
                     format: 'DD-MM-YYYY hh:mm:ss A'
                 }),

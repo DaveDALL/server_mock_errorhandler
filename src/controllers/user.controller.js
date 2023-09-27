@@ -29,7 +29,7 @@ const getUserByEmailController = async (req, res, next) => {
         }
         
     }catch(err) {
-        req.logger.warning(`No es posible obtener al usuario con el servicio\n${err}\n[code:] ${err.code}\n[casue:] ${err.cause}`)
+        req.logger.warning(`No es posible obtener al usuario con el servicio`)
         next(err)
     }
 }

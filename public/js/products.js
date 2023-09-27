@@ -114,7 +114,7 @@ async function prevPage(prevLink) {
     await productsRender(prevLink)
 }
 
-function viewCart() {
+async function viewCart() {
     let {payload} = userGot
     cartId = payload[0].cartId
     let cartUrl = `http://localhost:${port}/carts/${cartId}`

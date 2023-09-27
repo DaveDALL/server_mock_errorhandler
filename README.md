@@ -1,4 +1,4 @@
-# SERVIDOR EN CAPAS COMPLETO CON TICKETS CONTROL DE ERRORES
+# SERVIDOR EN CAPAS COMPLETO CON TICKETS CONTROL DE ERRORES y LOGGER
 
 El propósito de este proyecto es realizar un servidor completo por capas; que cuente con la posibilidad de crear un ticket de compra, y proveer del manejo de errores.
 
@@ -19,6 +19,7 @@ program.parse(process.argv)
 
 ```
 
+Una vez que el program toma el argumento de selección de entorno, se y se toman las opciones, donde se almacena el objeto con los argumentos como valor y las opciones como key. Con esto se en el archivo de configuración de variables de entorno **config.env.js**, se realiza la selección del entorno.
 
 ## MANEJO DE ERRORES
 
@@ -630,19 +631,21 @@ Para asignar los niveles personalizados y colores personalizados, se crea un arc
         debug: 5
     },
 
-    colors: {
+    colors: { //Tomar en cuenta que la documentación de winston no se puede asignar el color orange
         fatal: 'red',
-        error: 'orange',
-        warning: 'yellow',
-        info: 'blue',
+        error: 'yellow',
+        warning: 'blue',
+        info: 'grey',
         http: 'green',
-        debug: 'magenta'
+        debug: 'magenta',
     }
 }
 
 ```
 
-Por lo que al final el archivo tipo factory queda como sigue, y seleccionando el archivo de acuerdo al entorno:
+**Nota: Es importante tomar en cuenta que en la documentación de winston logger, al personalizar los colores no se peude asignar el orange como Font Foreground color en alguno de los niveles, en caso de que se asigne este color en algún nivel el server se "romperá" indicando que colors[Colorize.allColors [lookup]] is not a function**
+
+Al final el archivo tipo factory queda como sigue, y seleccionando el archivo de acuerdo al entorno:
 
 ```javascript
 
@@ -666,8 +669,17 @@ const loggerMiddleware = (req, res, next) => {
     next()
 }
 
-
 ```
+
+## ENDPOINT DE PRUEBA DE LOGGER
+
+Se realiza la implementación de un endpoint de prueba del logger creado, dado que el logger se configura de acuerdo al entorno; **en el entorno de desarrollo solo se observa los log desde consola desde el nivel debug**, sine embargo en el entorno de producción, **los log se observan en la consola a partir del nivel info**, y **a partir de nivel de error se almacen en un archivo a partir del nivel error**.
+
+El endpoint se encuentra en la dirección **http://localhost:PUERTO/api/loggerTest**.
+
+Lo que realiza el endpoint es la suma de numeros enteros, que llegan a través de los query params, y se espera recibir los parámetros **num1, num2 y num3**, de la forma **http://localhost:PUERTO/api/loggerTest?num1=NUMERO1&num2=NUMERO2&num3=NUMERO3**.
+
+en caso de que falte algún número, dos numeros, o todos, o se coloque cadenas de caracteres arrojaran el mensaje correspndiente. Cuando se envian numeros enteros, se realiza la suma y el endpoint envia el payload con la suma.
 
 # FIN
  
