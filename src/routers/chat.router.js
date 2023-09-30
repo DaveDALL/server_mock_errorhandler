@@ -2,8 +2,7 @@ import express from 'express'
 import passport from 'passport'
 const { Router } = express
 import Message from '../models/message.model.js'
-import userRollController from '../controllers/userRollValid.controller.js'
-const { isUserRollValid } = userRollController
+import userpolicies from '../middlewares/userMiddleware/userRollValid.middleware.js'
 
 function customerChat(io) {
     const router = new Router()
@@ -11,7 +10,7 @@ function customerChat(io) {
     let createdMessage = {}
     let control = 0
     
-    router.get('/', passport.authenticate('jwtAuth', {session:false}), isUserRollValid, async (req, res) => {
+    router.get('/', passport.authenticate('jwtAuth', {session:false}), userpolicies(['USUARIO']), async (req, res) => {
         if(control === 0) {
             createdMessage = await Message.create({messages: allMessages})
             control = 1

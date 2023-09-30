@@ -1,23 +1,22 @@
 import express from 'express'
 import passport from 'passport'
 import cartController from '../controllers/carts.controller.js'
-import userRollController from '../controllers/userRollValid.controller.js'
+import userpolicies from '../middlewares/userMiddleware/userRollValid.middleware.js'
 const { Router } = express
 const router = new Router()
 const {getCartByIdController, newCartController, updateCartController, delProductFromCartController, deleteCartController, purchaseCartController} = cartController
-const { isUserRollValid } = userRollController
 
-router.get('/:cid', passport.authenticate('jwtAuth', {session:false}), isUserRollValid, getCartByIdController)
+router.get('/:cid', passport.authenticate('jwtAuth', {session:false}), userpolicies(['USUARIO']), getCartByIdController)
 
-router.post('/newCart', passport.authenticate('jwtAuth', {session:false}), isUserRollValid, newCartController)
+router.post('/newCart', passport.authenticate('jwtAuth', {session:false}), userpolicies(['USUARIO']), newCartController)
 
-router.put('/:cid', passport.authenticate('jwtAuth', {session:false}), isUserRollValid, updateCartController)
+router.put('/:cid', passport.authenticate('jwtAuth', {session:false}), userpolicies(['USUARIO']), updateCartController)
 
-router.delete('/:cid/products/:pid', passport.authenticate('jwtAuth', {session:false}), isUserRollValid, delProductFromCartController)
+router.delete('/:cid/products/:pid', passport.authenticate('jwtAuth', {session:false}), userpolicies(['USUARIO']), delProductFromCartController)
 
-router.delete('/cart/:cid', passport.authenticate('jwtAuth', {session:false}), isUserRollValid, deleteCartController)
+router.delete('/cart/:cid', passport.authenticate('jwtAuth', {session:false}), userpolicies(['ADMIN']), deleteCartController)
 
-router.post('/:cid/purchase', purchaseCartController)
+router.post('/:cid/purchase', userpolicies(['USUARIO']), purchaseCartController)
 
 export default router
 

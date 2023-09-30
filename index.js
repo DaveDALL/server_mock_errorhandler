@@ -19,11 +19,10 @@ import githubRouter from './src/routers/github.router.js'
 import userRouter from './src/routers/user.router.js'
 import chatRouter from './src/routers/chat.router.js'
 import mockRouter from './src/mocks/product/product.mock.router.js'
-import LoggerTestRouter from './src/test/loggerTest.router.js'
+import loggerTestRouter from './src/test/loggerTest.router.js'
 import errorMiddleware from './src/errorMiddleware/controlError.middleware.js'
 import loggerMiddleware from './src/utils/logging/logger.js'
 import __dirname from './dirPath.js'
-import loggerTestRouter from './src/test/loggerTest.router.js'
 const app = express()
 const server = http.createServer(app)
 const io = new Server(server)

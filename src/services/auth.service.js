@@ -29,7 +29,7 @@ const authRegistrationService = async (user) => {
                     userMail,
                     userPassword: hashedPassword,
                     cartId: createdCart._id,
-                    userRoll: 'usuario'
+                    userRoll: 'USUARIO'
                 }
                 let createdUserResult = await UserDAO.createUser(createdUser)
                 if(createdUserResult) {
