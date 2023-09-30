@@ -20,7 +20,7 @@ import userRouter from './src/routers/user.router.js'
 import chatRouter from './src/routers/chat.router.js'
 import mockRouter from './src/mocks/product/product.mock.router.js'
 import loggerTestRouter from './src/test/loggerTest.router.js'
-import errorMiddleware from './src/errorMiddleware/controlError.middleware.js'
+import errorMiddleware from './src/middlewares/errorMiddleware/controlError.middleware.js'
 import loggerMiddleware from './src/utils/logging/logger.js'
 import __dirname from './dirPath.js'
 const app = express()
