@@ -1,8 +1,10 @@
 import cartService from '../services/carts.service.js'
+import productService from '../services/products.service.js'
 import CustomizedError from '../utils/errorHandler/errorHandler.customErrors.js'
 import EError from '../utils/errorHandler/errorHandler.enums.js'
 import { generateErrorInfo } from '../utils/errorHandler/errorHandler.info.js'
 const {getCartByIdService, newCartService, updateCartService, delProductFromCartService, deleteCartService, purchaseCartService} = cartService
+const { searchProductByIdService } = productService
 
 const getCartByIdController = async (req, res, next) => {
     try {
@@ -56,6 +58,7 @@ const updateCartController = async (req, res, next) => {
     try {
         let {cid} = req.params
         let {productId, qty} = req.body
+        let updatedCartResult = {}
         if(!cid || !productId || !qty || qty <= 0) {
             CustomizedError.createError({
                 name: 'Error en el cart',
@@ -64,7 +67,15 @@ const updateCartController = async (req, res, next) => {
                 code: EError.CART_INVALID_DATA_ERROR
             })
         }
-        let updatedCartResult = await updateCartService(cid, productId, qty)
+        let foundProductInDb = await searchProductByIdService(productId)
+        if(req.user.email === foundProductInDb.owner) {
+            CustomizedError.createError({
+                name: 'Error al agregar o modificar el producto al Cart',
+                cause: generateErrorInfo(EError.CART_INVALID_DATA_ERROR, {cid, productId, qty}),
+                message: 'El usuario PREMIUM es el propietario del producto',
+                code: EError.CART_INVALID_DATA_ERROR
+            })
+        } else updatedCartResult = await updateCartService(cid, productId, qty)
         if(updatedCartResult) {
             res.status(200).send({status: 'success', payload: updatedCartResult})
         }else {

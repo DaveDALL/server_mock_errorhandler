@@ -10,12 +10,10 @@ router.get('/', passport.authenticate('jwtAuth', {session:false}), conditionalSe
 
 router.get('/:pid', passport.authenticate('jwtAuth', {session:false}), searchProductByIdController)
 
-router.post('/newProduct', userpolicies(['PREMIUM', 'ADMIN']), newProductController)
+router.post('/newProduct', passport.authenticate('jwtAuth', {session:false}), userpolicies(['PREMIUM', 'ADMIN']), newProductController)
 
 router.put('/updateProduct', passport.authenticate('jwtAuth', {session:false}), userpolicies(['PREMIUM', 'ADMIN']), productUpdateController)
 
 router.delete('deleteProduct/:pid', passport.authenticate('jwtAuth', {session:false}), userpolicies(['PREMIUM', 'ADMIN']), deleteProductController)
 
 export default router
-
-//passport.authenticate('jwtAuth', {session:false}), isAdminRollValid

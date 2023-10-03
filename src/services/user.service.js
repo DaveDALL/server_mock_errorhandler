@@ -16,6 +16,22 @@ const getUserByEmailService = async (mail) => {
     }
 }
 
+const updateUserRollService = async (uid, actualRoll) => {
+    try{
+        let updateUserResult = await UserDAO.updateUserRoll(uid, actualRoll)
+        if(updateUserResult) {
+            return updateUserResult
+        }else {
+            logger.debug('No fue posible actualizar el usuario en MongoDB')
+            return {}
+        }
+        
+    }catch(err) {
+        throw new Error('Error al actualizar el roll del usuario con mongoose ', {cause: err})
+    }
+}
+
 export default {
-    getUserByEmailService
+    getUserByEmailService,
+    updateUserRollService
 }

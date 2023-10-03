@@ -1,9 +1,8 @@
 import userService from '../services/user.service.js'
-import errorHandler from '../errorMiddleware/controlError.middleware.js'
 import CustomizedError from '../utils/errorHandler/errorHandler.customErrors.js'
 import EError from '../utils/errorHandler/errorHandler.enums.js'
 import { generateErrorInfo } from '../utils/errorHandler/errorHandler.info.js'
-const { getUserByEmailService } = userService
+const { getUserByEmailService, updateUserRollService } = userService
 
 const getUserByEmailController = async (req, res, next) => {
     try{
@@ -34,6 +33,26 @@ const getUserByEmailController = async (req, res, next) => {
     }
 }
 
+const updateUserRollController = async (req, res, next) => {
+    try{
+        let {uid} = req.params
+        if(!uid) {
+            CustomizedError.createError({
+                name: 'Error al actualiza el usuario en el usuario',
+                cause: generateErrorInfo(EError.USER_INVALID_DATA_ERROR, uid),
+                message: 'No se cuenta con el parámetro para actualizar el usuario',
+                code: EError.USER_INVALID_DATA_ERROR
+            })
+        }
+        let updateUserResult = await updateUserRollService(uid, req.user.roll)
+        res.status(200).send({status: 'success', payload: updateUserResult})
+    }catch(err) {
+        req.logger.warning(`No es posible actualizar el roll del usuario con el servicio`)
+        next(err)
+    }
+}
+
 export default {
-    getUserByEmailController
+    getUserByEmailController,
+    updateUserRollController
 }

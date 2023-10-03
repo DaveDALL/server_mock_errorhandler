@@ -10,7 +10,7 @@ function customerChat(io) {
     let createdMessage = {}
     let control = 0
     
-    router.get('/', passport.authenticate('jwtAuth', {session:false}), userpolicies(['USUARIO']), async (req, res) => {
+    router.get('/', passport.authenticate('jwtAuth', {session:false}), userpolicies(['PREMIUM', 'USUARIO']), async (req, res) => {
         if(control === 0) {
             createdMessage = await Message.create({messages: allMessages})
             control = 1

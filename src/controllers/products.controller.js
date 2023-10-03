@@ -89,8 +89,9 @@ const newProductController = async (req, res, next) => {
 }
 
 const productUpdateController = async (req, res, next) => {
-    let productToUpdate = req.body
     try {
+        let productToUpdate = req.body
+        let productUpdatedResult = {}
         let {_id, code, title, description, thumbnails, price, stock, category} = productToUpdate
         if(!_id, !code || !title || !description || thumbnails.length <= 0 || !price || !stock || !category) {
             CustomizedError.createError({
@@ -100,7 +101,12 @@ const productUpdateController = async (req, res, next) => {
                 code: EError.PRODUCT_INVALID_DATA_ERROR
             })
         }
-        let productUpdatedResult = await productUpdateService(productToUpdate)
+        let foundProductInDb = await searchProductByIdService(_id)
+        if(req.user.roll === 'ADMIN') {
+            productUpdatedResult = await productUpdateService(productToUpdate)
+        }else if(req.user.roll ==='PREMIUM' && foundProductInDb.owner === req.user.email && productToUpdate.owner === foundProductInDb.owner) {
+            productUpdatedResult = await productUpdateService(productToUpdate)
+        }
         if(productUpdatedResult){
             res.status(200).send({status:'success', payload: productUpdatedResult})
         }else {
@@ -120,6 +126,7 @@ const productUpdateController = async (req, res, next) => {
 const deleteProductController = async (req, res, next) => {
     try {
         let {pid} = req.params
+        let productDeletedResult = {}
         if(!pid) {
             CustomizedError.createError({
                 name: 'Error en el producto',
@@ -128,7 +135,12 @@ const deleteProductController = async (req, res, next) => {
                 code: EError.PRODUCT_INVALID_PID_ERROR
             })
         }
-        let productDeletedResult = await deleteProductService(pid)
+        let foundProductInDb = await searchProductByIdService(pid)
+        if(req.user.roll === 'ADMIN') {
+            productDeletedResult = await deleteProductService(pid)
+        } else if(req.user.roll ==='PREMIUM' && foundProductInDb.owner === req.user.email) {
+            productDeletedResult = await deleteProductService(pid)
+        }
         if(productDeletedResult) {
             res.status(200).send({status: 'success', payload: productDeletedResult})
         }else {

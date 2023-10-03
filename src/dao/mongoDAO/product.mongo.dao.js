@@ -86,7 +86,7 @@ export class ProductMongoDAO {
 
     async createProduct (newProduct) {
         try{
-            let {code, title, description, thumbnails, price, stock, status, category} = newProduct
+            let {code, title, description, thumbnails, price, stock, status, category, owner} = newProduct
                 let productCreatedResult = await Product.create({
                     code,
                     title,
@@ -95,7 +95,8 @@ export class ProductMongoDAO {
                     price,
                     stock,
                     status,
-                    category
+                    category,
+                    owner: owner || 'admin'
                 })
                 return productCreatedResult
         }catch(err) {

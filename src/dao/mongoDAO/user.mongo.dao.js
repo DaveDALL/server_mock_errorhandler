@@ -38,4 +38,21 @@ export class UserMongoDAO {
             throw new Error('No se pudo confirmar el usuario en MongoDB con mongoose ', {cause: err})
         }
     }
+
+    async updateUserRoll (uid, actualRoll) {
+        console.log(uid, actualRoll)
+        try {
+            let updateUserRollResult = {}
+            let foundUser = await User.find({_id: uid})
+            console.log(foundUser, foundUser.userRoll)
+            if(foundUser[0].userRoll === actualRoll && foundUser[0].userRoll !== 'PREMIUM') {
+                updateUserRollResult = await User.updateOne({_id: uid}, {$set: {userRoll: 'PREMIUM'}})
+            }else if(foundUser[0].userRoll === actualRoll && foundUser[0].userRoll !== 'USUARIO') {
+                updateUserRollResult = await User.updateOne({_id: uid}, {$set: {userRoll: 'USUARIO'}})
+            } else throw new Error('No fue posible actualizar el roll del usuario en MongoDB con mongoose')
+            return updateUserRollResult
+        }catch(err) {
+            throw new Error('No fue posible actualizar el roll del usuario en MongoDB con mongoose', {cause: err})
+        }
+    }
 }

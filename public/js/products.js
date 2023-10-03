@@ -62,7 +62,9 @@ const addToCart = async (pid, status, stock) => {
     let putUrl = `http://localhost:${port}/api/carts/${cartId}`
     if(status && stock > 0) {
         let productAdded = await fetchingAddProductToCart(putUrl, pid, qty)
-        alert('producto agregado con exito')
+        if(productAdded.status === 'error') {
+            alert('Ocurrio un error al agregar el producto')
+        } else alert('producto agregado con exito')
     }
 }
 
@@ -107,11 +109,11 @@ const productsRender = async (Url1, url2) => {
 }
 
 async function nextPage(nextLink) {
-    await productsRender(nextLink)
+    await productsRender(nextLink, getUserUrl)
 }
 
 async function prevPage(prevLink) {
-    await productsRender(prevLink)
+    await productsRender(prevLink, getUserUrl)
 }
 
 async function viewCart() {
