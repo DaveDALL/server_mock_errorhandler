@@ -2,7 +2,7 @@ import userService from '../services/user.service.js'
 import CustomizedError from '../utils/errorHandler/errorHandler.customErrors.js'
 import EError from '../utils/errorHandler/errorHandler.enums.js'
 import { generateErrorInfo } from '../utils/errorHandler/errorHandler.info.js'
-const { getUserByEmailService, updateUserRollService } = userService
+const { getUserByEmailService, updateUserRollService, userMailPassRecoveryService } = userService
 
 const getUserByEmailController = async (req, res, next) => {
     try{
@@ -52,7 +52,31 @@ const updateUserRollController = async (req, res, next) => {
     }
 }
 
+const userMailPassRecoveryController = async (req, res, next) => {
+    try {
+        let { email } = req.body
+        if(!email) {
+            CustomizedError.createError({
+                name: 'Error al recuperar el usuario',
+                cause: generateErrorInfo(EError.USER_INVALID_DATA_ERROR, email),
+                message: 'No se cuenta con el parámetro para recuperar el usuario',
+                code: EError.USER_INVALID_DATA_ERROR
+            })
+        }
+        let mailSendResult = userMailPassRecoveryService(email)
+        if(!mailSendResult){
+            res.status()
+        }
+        res.status(200).send({status: 'success', payload: mailSendResult})
+    }catch(err) {
+        req.logger.warning(`No es posible enviar el correo con el servicio`)
+        next(err)
+    }
+
+}
+
 export default {
     getUserByEmailController,
-    updateUserRollController
+    updateUserRollController,
+    userMailPassRecoveryController
 }

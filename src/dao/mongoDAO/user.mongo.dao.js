@@ -1,4 +1,5 @@
 import User from '../../models/users.model.js'
+import emailTransport from '../../../config/transport.email.js'
 
 export class UserMongoDAO {
 
@@ -44,7 +45,6 @@ export class UserMongoDAO {
         try {
             let updateUserRollResult = {}
             let foundUser = await User.find({_id: uid})
-            console.log(foundUser, foundUser.userRoll)
             if(foundUser[0].userRoll === actualRoll && foundUser[0].userRoll !== 'PREMIUM') {
                 updateUserRollResult = await User.updateOne({_id: uid}, {$set: {userRoll: 'PREMIUM'}})
             }else if(foundUser[0].userRoll === actualRoll && foundUser[0].userRoll !== 'USUARIO') {
@@ -54,5 +54,29 @@ export class UserMongoDAO {
         }catch(err) {
             throw new Error('No fue posible actualizar el roll del usuario en MongoDB con mongoose', {cause: err})
         }
+    }
+
+    async userPassRecovery (mail, accessLink) {
+        let passToken
+        if(!accessLink) {
+            passToken = 'text'
+        }
+    } 
+
+    async sendMail (fromAddress, toAddress, subject, mailBody, attach) {
+        try{
+            let mailSendResult = await emailTransport.sendMail({
+                from: fromAddress,
+                to: toAddress,
+                subject: subject,
+                html: mailBody,
+                attachments: attach
+            })
+    
+            return mailSendResult
+        }catch(err) {
+            throw new Error('No fue posible enviar el correo al usuario', {cause: err})
+        }
+        
     }
 }

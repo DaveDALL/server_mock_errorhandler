@@ -27,5 +27,9 @@ export default {
     FILE_PRODUCTS_DB: process.env.FILE_PRODUCTS_DB,
     FILE_CARTS_DB: process.env.FILE_CARTS_DB,
     DATA_SOURCE: process.env.DATA_SOURCE,
-    LOGGER_TYPE: process.env.LOGGER_TYPE
+    LOGGER_TYPE: process.env.LOGGER_TYPE,
+    EMAIL_SERVICE: process.env.EMAIL_SERVICE,
+    EMAIL_PORT: process.env.EMAIL_PORT,
+    EMAIL_USER: process.env.EMAIL_USER,
+    EMAIL_PASS: process.env.EMAIL_PASS
 }

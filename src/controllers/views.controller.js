@@ -25,10 +25,15 @@ const cartViewController = (req, res) => {
     res.status(200).render('cart', {port: PORT})
 }
 
+const userPassRecoveryViewController = (req, res) => {
+    res.render('recovery', {})
+}
+
 export default {
     userRegistrationViewController,
     userLoginController,
     userLogoutController,
     productViewController,
-    cartViewController
+    cartViewController,
+    userPassRecoveryViewController
 }

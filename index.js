@@ -57,6 +57,10 @@ initializePassportJwt()
 //Logger Middleware
 app.use(loggerMiddleware)
 
+//Auth Routers
+app.use('/', authRouter)
+app.use ('/auth', githubRouter)
+
 //middleware de router
 app.use('/api/products', productRouter)
 app.use('/api/carts', cartRouter)
@@ -65,10 +69,6 @@ app.use('/api/users', userRouter)
 app.use('/chat', chatRouter(io))
 app.use('/mockingproducts', mockRouter)
 app.use('/api/loggerTest', loggerTestRouter)
-
-//Auth Routers
-app.use('/', authRouter)
-app.use ('/auth', githubRouter)
 
 app.use(errorMiddleware)
 
