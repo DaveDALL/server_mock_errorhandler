@@ -38,10 +38,16 @@ const userMailPassRecoveryService = async (toAddress) => {
         let userfound = await UserDAO.getUserByEmail(toAddress)
 
     if(userfound.length > 0) {
+      
+        let passRecovery = await UserDAO.userPassRecovery(toAddress)
+
         let subject = 'Recuperación de Contraseña'
         let mailBody = `
             <h3>Correo de Recuperación de contraseña</h3>
-            <p>\n\nEstimado usuario ${toAddress}, enviamos la siguiente notificación con el enlace de recuperación de tu contraseña</p>
+            <p>\n\nEstimado usuario ${toAddress}, enviamos la siguiente notificación con el botón de recuperación de tu contraseña\n\n</p>
+            <form action="/api/users/recoveryPassLink/${passRecovery.link}" method="get">
+                <input type="submit" value="Restablecer Contraseña">
+            </form>
             <p>\n\nSin más por el momento enviamos saludos cordiales.</p>
             <p>\n\nAtte.\n\n</p>
             <h4>SuperArticulos</h4>
@@ -52,20 +58,11 @@ const userMailPassRecoveryService = async (toAddress) => {
 
         return 'Email con recuperación enviado'
     }else {
-        let subject = 'Usuario no registrado'
-        let mailBody = `
-            <h3>Usuario no registrado</h3>
-            <p>\n\nEstimado usuario ${toAddress}, enviamos la siguiente notificación ya que se encuentra registrado en nuestra tienda</p>
-            <p>\n\nSin más por el momento enviamos saludos cordiales.</p>
-            <p>\n\nAtte.\n\n</p>
-            <h4>SuperArticulos</h4>
-        `
-        let attach = []
-
-        await UserDAO.sendMail(EMAIL_USER, toAddress, subject, mailBody, attach)
-
+        logger.warning('El usuario no se encuentra registrado')
         return null
     }
+        
+    
     }catch(err) {
         logger.warning('No fue posible enviar con correo con el servicio')
         throw new Error('No fue posible enviar el correo con el servicio', {cause: err})
@@ -73,8 +70,17 @@ const userMailPassRecoveryService = async (toAddress) => {
     
 }
 
+const userLinkVerifyService = async (link) => {
+    let verifyLinkResult = await UserDAO.verifyLink(link)
+    if(verifyLinkResult) {
+        return true
+    }else return false
+
+}
+
 export default {
     getUserByEmailService,
     updateUserRollService,
-    userMailPassRecoveryService
+    userMailPassRecoveryService,
+    userLinkVerifyService
 }

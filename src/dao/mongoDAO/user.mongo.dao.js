@@ -1,4 +1,5 @@
 import User from '../../models/users.model.js'
+import Recovery from '../../models/recovery.model.js'
 import emailTransport from '../../../config/transport.email.js'
 
 export class UserMongoDAO {
@@ -56,10 +57,37 @@ export class UserMongoDAO {
         }
     }
 
-    async userPassRecovery (mail, accessLink) {
-        let passToken
-        if(!accessLink) {
-            passToken = 'text'
+    async verifyLink (link) {
+        try {
+            let accessLink = await Recovery.findOne({'link': link})
+            if(accessLink) {
+                if(accessLink.endTime < Date.now()) {
+                    return true
+                }else {
+                    await Recovery.deleteOne({'link': link})
+                    return false
+                }
+            }else throw new Error('No existe el link')
+        }catch(err) {
+            throw new Error('No se puede obtener el link en MongoDB con mongoose', {cause: err})
+        }
+    }
+
+    async userPassRecovery (email) {
+        try {
+            let accessData = {
+                email,
+                link: Date.now().toString(36),
+                startTime: Date.now(),
+                endTime: Date.now() + 3600000
+            }
+    
+            let accessLink = await Recovery.create(accessData)
+            if(accessLink) {
+                return accessLink
+            } else return {}
+        }catch(err) {
+            throw new Error('No fue posible crear el Link en MongoDB con mongoose', {cause: err})
         }
     } 
 

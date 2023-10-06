@@ -2,7 +2,7 @@ import userService from '../services/user.service.js'
 import CustomizedError from '../utils/errorHandler/errorHandler.customErrors.js'
 import EError from '../utils/errorHandler/errorHandler.enums.js'
 import { generateErrorInfo } from '../utils/errorHandler/errorHandler.info.js'
-const { getUserByEmailService, updateUserRollService, userMailPassRecoveryService } = userService
+const { getUserByEmailService, updateUserRollService, userMailPassRecoveryService, userLinkVerifyService } = userService
 
 const getUserByEmailController = async (req, res, next) => {
     try{
@@ -75,8 +75,19 @@ const userMailPassRecoveryController = async (req, res, next) => {
 
 }
 
+const userPassLinkRecoveryController = async (req, res, next) => {
+    let {link} = req.params
+    let linkVerify = await userLinkVerifyService(link)
+    if(linkVerify) {
+        res.render('passChange', {})
+    }else {
+        res.status(401).send({status: 'error', error: 'No esta autorizado para realizar la recuperación'})
+    }
+}
+
 export default {
     getUserByEmailController,
     updateUserRollController,
-    userMailPassRecoveryController
+    userMailPassRecoveryController,
+    userPassLinkRecoveryController,
 }
