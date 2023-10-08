@@ -42,7 +42,6 @@ export class UserMongoDAO {
     }
 
     async updateUserRoll (uid, actualRoll) {
-        console.log(uid, actualRoll)
         try {
             let updateUserRollResult = {}
             let foundUser = await User.find({_id: uid})
@@ -62,14 +61,13 @@ export class UserMongoDAO {
             let accessLink = await Recovery.findOne({'link': link})
             if(accessLink) {
                 let currentTime = Date.now()
-                console.log(accessLink.endTime, currentTime)
                 if(accessLink.endTime > currentTime) {
                     return true
                 }else {
                     await Recovery.deleteOne({'link': link})
                     return false
                 }
-            }else throw new Error('No existe el link')
+            }else return false
         }catch(err) {
             throw new Error('No se puede obtener el link en MongoDB con mongoose', {cause: err})
         }

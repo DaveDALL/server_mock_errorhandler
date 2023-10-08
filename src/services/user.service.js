@@ -84,17 +84,17 @@ const userPassChangeService = async (link, userPassMain, userPassSecond) => {
         if(userPassMain !== userPassSecond) {
             return null
         }else {
-            let userLink = UserDAO.getUserLink(link)
+            let userLink = await UserDAO.getUserLink(link)
             if(!userLink) {
                 throw new Error('No es posible recuperar el usuario con link proporcionado')
             }else {
-                let user = UserDAO.getUserByEmail(userLink.email)
-                isValidPass = validatePass(userPassMain, user[0].userPassword)
+                let user = await UserDAO.getUserByEmail(userLink.email)
+                let isValidPass = validatePass(userPassMain, user[0].userPassword)
                 if(isValidPass) {
                     return '0'
                 }else {
                     let newUserPass = passHashing(userPassMain)
-                    let updateUserPassResult = UserDAO.updateUserPass(user[0]._id, newUserPass)
+                    let updateUserPassResult = await UserDAO.updateUserPass(user[0]._id, newUserPass)
                     if(updateUserPassResult) {
                         return '1'
                     }else return '-1'
@@ -102,8 +102,8 @@ const userPassChangeService = async (link, userPassMain, userPassSecond) => {
             }
         }
     }catch(err) {
-        logger.warning('No fue posible actualizar la contrseña con el servicio')
-        throw new Error('No fue posible actualizar la contrseña con el servicio', {cause: err})
+        logger.warning('No fue posible actualizar la contraseña con el servicio')
+        throw new Error('No fue posible actualizar la contraseña con el servicio', {cause: err})
     }
 }
 

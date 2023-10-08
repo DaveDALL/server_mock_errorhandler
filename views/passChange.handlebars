@@ -6,19 +6,15 @@
 </head>
 <main>
     <div class="col-2"></div>
-    <div>
-        <p id="changeMessage" class="change-message"></p>
-    </div>
+    <div id="messageChange"></div>
     <div class="col-8 container">
         <form action="/api/users/passChanger" method="post">
             <input type="hidden" name="passLink" id="passLink" value="{{link}}">
             <input type="password" name="userPassChangeMain" id="userPassChangeMain" placeholder="Introduzca su contraseña" required="true" pattern="\S+">
             <input type="password" name="userPassChangeSecond" id="userPassChangeSecond" placeholder="Introduzca nuenamente su contraseña" required="true" pattern="\S+">
             <input type="submit" id="passChangeButton" value="Enviar" disabled="true">
-    </form>
-    <div>
-        <p id="inputValidation"></p>
-    </div>
+        </form>
+        <div id="validateInput"></div>
     </div>
     <div class="col-2"></div>
 </main>

@@ -90,10 +90,10 @@ const userPassLinkRecoveryController = async (req, res, next) => {
         if(linkVerify) {
             res.render('passChange', {link: link, changeMessage: ""})
         }else {
-            res.
-            status(401).
-            send({status: 'error', error: 'No esta autorizado para realizar la recuperación'}).
-            render('recovery', {})
+            res.render('recovery', (err, html) => {
+                html='No esta autorizado para realizar la recuperación de contraseña'
+                res.status(401).send({status: 'error', error: html})
+            })
         }
     }catch(err) {
         req.logger.warning(`No es posible verificar el link para cambio de contraseña con el servicio`)
@@ -101,31 +101,34 @@ const userPassLinkRecoveryController = async (req, res, next) => {
     } 
 }
 
-const userPassChange = async (req, res, next) => {
+const userPassChangeController = async (req, res, next) => {
     try{
-        let { link, userPassChangeMain, userPassChangeSecond } = req.body
-        let updatedUserPassResult = userPassChangeService(link, userPassChangeMain, userPassChangeSecond)
+        let { passLink, userPassChangeMain, userPassChangeSecond } = req.body
+        let updatedUserPassResult = await userPassChangeService(passLink, userPassChangeMain, userPassChangeSecond)
         if(!updatedUserPassResult) {
             CustomizedError.createError({
                 name: 'Error al recuperar el usuario',
-                cause: generateErrorInfo(EError.USER_INVALID_DATA_ERROR, link),
+                cause: generateErrorInfo(EError.USER_INVALID_DATA_ERROR, passLink),
                 message: 'No fue posible validar la contraseña y la confirmación de contraseña correctamente',
                 code: EError.USER_INVALID_DATA_ERROR
             })
-            res.render('passChange', {link: link, changeMessage: "No es posible actualizar la contraseña, intentelo nuevamente"})
+            res.render('passChange', {link: passLink, changeMessage: "No es posible actualizar la contraseña, intentelo nuevamente"})
         }else {
             switch(updatedUserPassResult) {
                 case '-1':
-                    res.render('passChange', {link: link, changeMessage: "No fue posible actualizar la contraseña, intentelo nuevamente"})
+                    res.render('passChange', {link: passLink, changeMessage: "No fue posible actualizar la contraseña, intentelo nuevamente"})
                     break
                 case '0':
-                    res.render('passChange', {link: link, changeMessage: "La contraseña introducida ya fue usada anteriormente"})
+                    res.render('passChange', {link: passLink, changeMessage: "La contraseña introducida ya fue usada anteriormente"})
                     break
                 case '1':
-                    res.status(200).send({status: 'success', payload: 'La contraseña de actualizo con éxito'})
+                    res.render('login', (err, html) => {
+                        html = 'La contraseña de actualizo con éxito'
+                        res.status(200).send({status: 'success', payload: html})
+                    })
                     break
                 default:
-                    res.render('passChange', {link: link, changeMessage: "No fue posible actualizar la contraseña, intentelo nuevamente"})
+                    res.render('passChange', {link: passLink, changeMessage: "Hubo un error actualizar la contraseña, intentelo nuevamente"})
             }
         }
     }catch {
@@ -138,5 +141,5 @@ export default {
     updateUserRollController,
     userMailPassRecoveryController,
     userPassLinkRecoveryController,
-    userPassChange,
+    userPassChangeController
 }

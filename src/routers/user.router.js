@@ -2,7 +2,7 @@ import express from 'express'
 import passport from 'passport'
 import userController from '../controllers/user.controller.js'
 const { Router } = express
-const { getUserByEmailController, updateUserRollController, userMailPassRecoveryController, userPassLinkRecoveryController, userPassChange } = userController
+const { getUserByEmailController, updateUserRollController, userMailPassRecoveryController, userPassLinkRecoveryController, userPassChangeController } = userController
 const userRouter = Router()
 
 userRouter.post('/currentUser', passport.authenticate('jwtAuth', {session:false}), getUserByEmailController)
@@ -13,6 +13,6 @@ userRouter.post('/recoveryPass', userMailPassRecoveryController)
 
 userRouter.get('/recoveryPassLink/:link', userPassLinkRecoveryController)
 
-userRouter.post('/passChanger', userPassChange)
+userRouter.post('/passChanger', userPassChangeController)
 
 export default userRouter
