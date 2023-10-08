@@ -1,4 +1,4 @@
-# SERVIDOR EN CAPAS COMPLETO CON TICKETS CONTROL DE ERRORES y LOGGER
+# SERVIDOR EN CAPAS COMPLETO CON TICKETS CONTROL DE ERRORES, LOGGER Y RECUPERACION DE CONTRASEÑA
 
 El propósito de este proyecto es realizar un servidor completo por capas; que cuente con la posibilidad de crear un ticket de compra, y proveer del manejo de errores.
 
@@ -59,6 +59,66 @@ catch(err) {
     }
 
 ```
+
+
+## ROLES DE USUARIO
+
+SE cuenta con 2 roles de usuario, los cuales son llamados **USUARIO** y **PREMIUM**. Los usuarios premium tienen el privilegio de poder publicar articulos para su venta; sin embargo al momento de realizar la compra de sus propios articulos, estan bloquedado para no poder hacerlo. Los productos que se den de alta con el usuario premium tendran un campo en la colección de productos llamada **owner** donde se coloca el correo electronico del usuario premium.
+
+Se puede realizar el cambio entre usuario estandar y usuario premium mediante la ruta:
+
+```javascript
+
+userRouter.post('/premium/:uid', passport.authenticate('jwtAuth', {session:false}), updateUserRollController)
+
+```
+
+donde uid, es el ID del usuario. y para poder hacer el cambio se tiene una política de restricción donde el usuarionde debe de estar logueado para poder hacer este cambio
+
+SE cuenta con un rol de administrador, el cual tiene provilegios para eliminar carts y productos, o para dar de alta productos, actualizar productos, etc., tanto los dados de alta pro el administrador como por un usuario premium.
+
+
+
+## SISTEMA DE RECUPERACION DE CONTRASEÑA
+
+El sistema consiste en un enlace que encuentra en el login, donde se redirecciona hacia una pagina donde solicitará el correo electrónico registrado, para poder realizar la recuperación.
+
+para realizar esto se crea una coleccion en la base de datos que contendrá el id del link el cual se generará de forma aleatoria, el correo del usuario, el tiempo de inicio y tiempo final de aproximadamente una hora mas. para ello se crea un modelo con mongoose llamado Recovery
+
+```javascript
+
+const recoverySchema = new mongoose.Schema({
+    email: {
+        type: String,
+        required: true
+    },
+    link: {
+        type: String,
+        required: true
+    },
+    startTime: {
+        type: Number,
+        required: true
+    },
+    endTime: {
+        type: Number,
+        required: true
+    }
+})
+
+```
+
+Este modelo conecta hacia la colección llamada **recoveries**.
+
+Mediante el uso de **nodemailer**, se realiza el envío de un correo electrónico con un botón para poder realizar la recuperación, este boto tiene un formulario qu dispara un router con el método GET hacia la ruta **/recoveryPassLink/:link**; donde link es el id del link generado automáticamente.
+
+Por lo que el sistema de recuperación de contraseña consiste en realizar el cambio de la contraseña a través de un formulario que tiene dos campos para realizar la confirmación de la contraseña nueva, por lo que mediante javascript y eventos se realiza comparación de ambos campos; es importante retirar el foco del campo de confirmación para que se dispare el evento de comparación.
+
+Posteriormente, con la contraseña nueva y el id del link, se obtiene la información de la colección recoveries para obtener nuevamente el e-mail de usuario; y con esto obtener la información del usuario para realizar la verificación de la contraseña del usuario. En caso de que sea la misma se le informará que esa contraseña ha sido empleada anteriormente, por lo que hasta que ya se lanza la contraseña diferente es cuando se manda a llamar a la ruta para realizar el cambio de contraseña en la base de datos.
+
+Si el cambio fue exitoso, se le informara al cliente.
+
+
 
 ## SERVIDOR
 
