@@ -1,8 +1,10 @@
 import DAOS from '../dao/daos.factory.js'
 import logger from '../utils/logging/factory.logger.js'
 import CONFIG from '../../config/config.env.js'
+import encrypt from '../../config/bcrypt.js'
 const { UserDAO } = DAOS
-const { EMAIL_USER } = CONFIG
+const { EMAIL_USER, PORT } = CONFIG
+const { passHashing, validatePass } =encrypt
 
 const getUserByEmailService = async (mail) => {
     try {
@@ -45,7 +47,7 @@ const userMailPassRecoveryService = async (toAddress) => {
         let mailBody = `
             <h3>Correo de Recuperación de contraseña</h3>
             <p>\n\nEstimado usuario ${toAddress}, enviamos la siguiente notificación con el botón de recuperación de tu contraseña\n\n</p>
-            <form action="/api/users/recoveryPassLink/${passRecovery.link}" method="get">
+            <form action="http://localhost:${PORT}/api/users/recoveryPassLink/${passRecovery.link}" method="get">
                 <input type="submit" value="Restablecer Contraseña">
             </form>
             <p>\n\nSin más por el momento enviamos saludos cordiales.</p>
@@ -75,12 +77,40 @@ const userLinkVerifyService = async (link) => {
     if(verifyLinkResult) {
         return true
     }else return false
+}
 
+const userPassChangeService = async (link, userPassMain, userPassSecond) => {
+    try {
+        if(userPassMain !== userPassSecond) {
+            return null
+        }else {
+            let userLink = UserDAO.getUserLink(link)
+            if(!userLink) {
+                throw new Error('No es posible recuperar el usuario con link proporcionado')
+            }else {
+                let user = UserDAO.getUserByEmail(userLink.email)
+                isValidPass = validatePass(userPassMain, user[0].userPassword)
+                if(isValidPass) {
+                    return '0'
+                }else {
+                    let newUserPass = passHashing(userPassMain)
+                    let updateUserPassResult = UserDAO.updateUserPass(user[0]._id, newUserPass)
+                    if(updateUserPassResult) {
+                        return '1'
+                    }else return '-1'
+                }
+            }
+        }
+    }catch(err) {
+        logger.warning('No fue posible actualizar la contrseña con el servicio')
+        throw new Error('No fue posible actualizar la contrseña con el servicio', {cause: err})
+    }
 }
 
 export default {
     getUserByEmailService,
     updateUserRollService,
     userMailPassRecoveryService,
-    userLinkVerifyService
+    userLinkVerifyService,
+    userPassChangeService
 }

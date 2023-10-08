@@ -61,7 +61,9 @@ export class UserMongoDAO {
         try {
             let accessLink = await Recovery.findOne({'link': link})
             if(accessLink) {
-                if(accessLink.endTime < Date.now()) {
+                let currentTime = Date.now()
+                console.log(accessLink.endTime, currentTime)
+                if(accessLink.endTime > currentTime) {
                     return true
                 }else {
                     await Recovery.deleteOne({'link': link})
@@ -105,6 +107,26 @@ export class UserMongoDAO {
         }catch(err) {
             throw new Error('No fue posible enviar el correo al usuario', {cause: err})
         }
-        
+    }
+
+    async getUserLink (link) {
+        try {
+            let userLink = Recovery.findOne({'link': link})
+            if(userLink) {
+                return userLink
+            }else return {}
+        }catch(err) {
+            throw new Error('No fue posible obtener el usuario con el link proporcionado', {cause: err})
+        }
+    }
+    async updateUserPass (uid, newPass) {
+        try {
+            let updatedUserPassResult = User.updateOne({_id: uid}, {$set: {userPassword: newPass}})
+            if(updatedUserPassResult) {
+                return updatedUserPassResult
+            }else return {}
+        }catch {
+            throw new Error('No fue posible actualizar la contraseña del usuario', {cause: err})
+        }
     }
 }
