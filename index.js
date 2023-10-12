@@ -6,6 +6,8 @@ import cookieParser from 'cookie-parser'
 import handlebars from 'express-handlebars'
 import passport from 'passport'
 import { Server } from 'socket.io'
+import swaggerJsDocs from 'swagger-jsdoc'
+import swaggerUiExpress from 'swagger-ui-express'
 import initializePassportGit from './config/passportGit.config.js'
 import initializePassportJwt from './config/passportJwt.config.js'
 import mongoManager from './src/db/mongo.connect.manager.js'
@@ -23,10 +25,32 @@ import loggerTestRouter from './src/test/loggerTest.router.js'
 import errorMiddleware from './src/middlewares/errorMiddleware/controlError.middleware.js'
 import loggerMiddleware from './src/utils/logging/logger.js'
 import __dirname from './dirPath.js'
+
 const app = express()
 const server = http.createServer(app)
 const io = new Server(server)
 const { PORT,  MONGO_URL, SECRET } = CONFIG
+
+//Swagger options
+const swaggerOptions = {
+    definition: {
+        openapi: '3.1.0',
+        info:{
+            title: 'Rest API de e-commerce de SuperArticulos',
+            version: '1.0.0',
+            description: 'Rest API con los endpoints para la administración y operación de un e-commerce llamado SuperArticulos',
+            contact:{
+                name: 'Soporte Técnico de SuperArticulos',
+                email: 'super.articulos.corp@gmail.com'
+            }
+        }
+    },
+    apis: [`${__dirname}/docs/**/*.yaml`]
+}
+
+//Swagger Middleware
+const specs = swaggerJsDocs(swaggerOptions)
+app.use('/APIDocumentation', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 
 //middleware de archivos estaticos publicos, JSON y encoding
 app.use(express.static(__dirname + '/public'))
@@ -70,9 +94,10 @@ app.use('/chat', chatRouter(io))
 app.use('/mockingproducts', mockRouter)
 app.use('/api/loggerTest', loggerTestRouter)
 
+//Error Middleware
 app.use(errorMiddleware)
 
 server.listen(PORT, () => {
     logger.info(`Server Runnig at port ${PORT}`)
-    mongoManager.connect()
+    //mongoManager.connect()
 })

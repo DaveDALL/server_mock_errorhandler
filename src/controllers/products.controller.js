@@ -26,7 +26,7 @@ const conditionalSearchProductsController = async (req, res) => {
         })
     }catch(err) {
         req.logger.warning(`No es posible obtener los productos desde el servicio de productos\n${err}\n[code:] ${err.code}\n[casue:] ${err.cause}`)
-        res.status(500).send({status: 'error', error: 'No es posible obtener productos con mongoose'})
+        res.status(404).send({status: 'error', error: 'No es posible obtener productos con mongoose'})
     }
 }
 
