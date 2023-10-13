@@ -38,7 +38,7 @@ const newCartController = async (req, res, next) => {
     try{
         let cartCreatedResult = await newCartService()
         if(cartCreatedResult) {
-            res.status(200).send({status: 'success', payload: cartCreatedResult})
+            res.status(201).send({status: 'success', payload: cartCreatedResult})
         }else {
             CustomizedError.createError({
                 name: 'Error en el cart',
@@ -51,6 +51,7 @@ const newCartController = async (req, res, next) => {
     }catch(err) {
         req.logger.error(`No es posible crear el car con el servicio\n${err}\n[code:] ${err.code}\n[casue:] ${err.cause}`)
         next(err)
+        res.status(404).send({status: 'error', error: 'No fue posible crear el cart con mongoose'})
     }
 }
 

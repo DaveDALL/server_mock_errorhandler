@@ -55,6 +55,7 @@ const searchProductByIdController = async (req, res, next) => {
     }catch(err) {
         req.logger.warning(`No es posible buscar los productos\n${err}\n[code:] ${err.code}\n[casue:] ${err.cause}`)
         next(err)
+        res.status(404).send({status: 'error', error: 'No es posible obtener el productos por su ID con mongoose'})
     }
 }
 
@@ -72,7 +73,7 @@ const newProductController = async (req, res, next) => {
         }
         let createdProductResult = await newProductService(newProduct)
         if(createdProductResult) {
-            res.status(200).send({status: 'success', payload: createdProductResult})
+            res.status(201).send({status: 'success', payload: createdProductResult._id})
         }else {
             CustomizedError.createError({
                 name: 'Error en el producto',
@@ -83,7 +84,8 @@ const newProductController = async (req, res, next) => {
         }
     }catch(err) {
         req.logger.error(`No es posible crear el producto\n${err}\n[code:] ${err.code}\n[casue:] ${err.cause}`)
-        next(err) 
+        next(err)
+        res.status(404).send({status: 'error', error: 'No es posible crear el producto nuevo con mongoose'})
     }
     
 }
@@ -108,7 +110,7 @@ const productUpdateController = async (req, res, next) => {
             productUpdatedResult = await productUpdateService(productToUpdate)
         }
         if(productUpdatedResult){
-            res.status(200).send({status:'success', payload: productUpdatedResult})
+            res.status(202).send({status:'success', payload: 'El producto fue actualizado con éxito'})
         }else {
             CustomizedError.createError({
                 name: 'Error en el producto',
@@ -120,6 +122,7 @@ const productUpdateController = async (req, res, next) => {
     }catch(err) {
         req.logger.warning(`No es posible actualizar el producto\n${err}\n[code:] ${err.code}\n[casue:] ${err.cause}`)
         next(err)
+        res.status(404).send({status: 'error', error: 'No es posible actualizar el producto con mongoose'})
     }
 }
 
@@ -142,7 +145,7 @@ const deleteProductController = async (req, res, next) => {
             productDeletedResult = await deleteProductService(pid)
         }
         if(productDeletedResult) {
-            res.status(200).send({status: 'success', payload: productDeletedResult})
+            res.status(202).send({status: 'success', payload: 'El producto fue eliminado con éxito'})
         }else {
             CustomizedError.createError({
                 name: 'Error en el producto',
@@ -154,6 +157,7 @@ const deleteProductController = async (req, res, next) => {
     }catch(err) {
         req.logger.warning(`No es posible borrar el producto\n${err}\n[code:] ${err.code}\n[casue:] ${err.cause}`)
         next(err)
+        res.status(404).send({status: 'error', error: 'No es posible eliminar el producto con mongoose'})
     }
 }
 
