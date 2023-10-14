@@ -78,7 +78,7 @@ const updateCartController = async (req, res, next) => {
             })
         } else updatedCartResult = await updateCartService(cid, productId, qty)
         if(updatedCartResult) {
-            res.status(200).send({status: 'success', payload: updatedCartResult})
+            res.status(202).send({status: 'success', payload: 'Se actualizó el cart con éxito'})
         }else {
             CustomizedError.createError({
                 name: 'Error en el cart',
@@ -90,6 +90,7 @@ const updateCartController = async (req, res, next) => {
     }catch(err) {
         req.logger.warning(`No es posible actualizar el car con el servicio\n${err}\n[code:] ${err.code}\n[casue:] ${err.cause}`)
         next(err)
+        res.status(404).send({status: 'error', error: 'No fue posible actualizar el cart con mongoose'})
     }
 }
 
@@ -106,7 +107,7 @@ const delProductFromCartController = async (req, res, next) => {
         }
         let updatedCartResult = await delProductFromCartService(cid, pid)
         if(updatedCartResult) {
-            res.status(200).send({status: 'success', payload: updatedCartResult})
+            res.status(200).send({status: 'success', payload: 'El producto se eliminó del cart con éxito'})
         }else {
             CustomizedError.createError({
                 name: 'Error en el cart',
@@ -118,6 +119,7 @@ const delProductFromCartController = async (req, res, next) => {
     }catch(err) {
         req.logger.warning(`No es posible borrar el producto con el servicio\n${err}\n[code:] ${err.code}\n[casue:] ${err.cause}`)
         next(err)
+        res.status(404).send({status: 'error', error: 'No fue posible eliminar el producto del cart con mongoose'})
     }
 }
 
@@ -134,7 +136,7 @@ const deleteCartController = async (req, res, next) => {
         }
         let deletedCartResult = await deleteCartService(cid)
         if(deletedCartResult) {
-            res.status(200).send({status: 'success', payload: deletedCartResult})
+            res.status(202).send({status: 'success', payload: 'El cart se eliminó con éxito'})
         } else {
             CustomizedError.createError({
                 name: 'Error en el cart',
@@ -146,6 +148,7 @@ const deleteCartController = async (req, res, next) => {
     }catch(err) {
         req.logger.warning(`No es posible borrar el cart con el servicio\n${err}\n[code:] ${err.code}\n[casue:] ${err.cause}`)
         next(err)
+        res.status(404).send({status: 'error', error: 'No fue posible eliminar el cart con mongoose'})
     }
 }
 
@@ -160,9 +163,9 @@ const purchaseCartController = async (req, res, next) => {
                 code: EError.CART_INVALID_CID_ERROR
             })
         }
-        let userByCart = await purchaseCartService(cid)
-        if(userByCart) {
-            res.status(200).send({status: 'success', payload: userByCart})
+        let purchaseOrder = await purchaseCartService(cid)
+        if(purchaseOrder) {
+            res.status(202).send({status: 'success', payload: purchaseOrder})
         }else {
             CustomizedError.createError({
                 name: 'Error en el cart',
@@ -174,6 +177,7 @@ const purchaseCartController = async (req, res, next) => {
     }catch(err) {
         req.logger.warning(`No es posible crear el ticket con el servicio\n${err}\n[code:] ${err.code}\n[casue:] ${err.cause}`)
         next(err)
+        res.status(404).send({status: 'error', error: 'No fue posible crear el ticket con mongoose'})
     }
 }
 

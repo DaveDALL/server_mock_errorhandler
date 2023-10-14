@@ -99,5 +99,5 @@ app.use(errorMiddleware)
 
 server.listen(PORT, () => {
     logger.info(`Server Runnig at port ${PORT}`)
-    //mongoManager.connect()
+    mongoManager.connect()
 })

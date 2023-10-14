@@ -183,7 +183,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '$/components/schemas/Product'
+              $ref: '#/components/schemas/Product'
             example:
               code: '1001'
               title: Reloj inteligente de 1.72 pulg. IP68
@@ -246,7 +246,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '$/components/schemas/Product'
+              $ref: '#/components/schemas/Product'
             example:
               _id: 64b33434612c887886e81ea3
               code: '1001'
