@@ -14,9 +14,10 @@ const authRegistrationController = async (req, res, next) => {
                 message: 'Falla en los datos de las propiedades al crear el usuario durante el registro',
                 code: EError.USER_REGISTRATION_DATA_ERROR
             })
+        }else {
+            await authRegistrationService(user)
+            res.redirect('/')
         }
-        await authRegistrationService(user)
-        res.redirect('/')
     }catch(err) {
         next(err)
         req.logger.error(`No fue posible crear el usuario en la base de datos\n${err}\n[code:] ${err.code}\n[casue:] ${err.cause}`)
