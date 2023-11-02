@@ -1,5 +1,14 @@
 import mongoose from 'mongoose'
 
+const documentSchema = new mongoose.Schema({
+    docName: {
+        type: String
+    },
+    reference: {
+        type: String
+    }
+})
+
 const userSchema = new mongoose.Schema({
     userName: {
         type: String,
@@ -27,6 +36,15 @@ const userSchema = new mongoose.Schema({
     userRoll : {
         type: String,
         required: true,
+    },
+    documents: {
+        type: [documentSchema]
+    }
+},
+{
+    timestamps: {
+        createdAt: false,
+        updatedAt: 'last_connection',
     }
 },
 {

@@ -10,7 +10,8 @@ const cartProductSchema = new mongoose.Schema({
 })
 const cartSchema = new mongoose.Schema({
     products: {
-        type: [cartProductSchema]}
+        type: [cartProductSchema]
+    }
 })
 
 cartSchema.pre('findOne', function () {

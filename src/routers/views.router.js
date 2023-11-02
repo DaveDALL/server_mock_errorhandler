@@ -4,7 +4,7 @@ import viewsController from '../controllers/views.controller.js'
 import userpolicies from '../middlewares/userMiddleware/userRollValid.middleware.js'
 const { Router } = express
 const viewsRouter = new Router()
-const {userRegistrationViewController, userLoginController, userLogoutController, productViewController, cartViewController, userPassRecoveryViewController} = viewsController
+const {userRegistrationViewController, userLoginController, userLogoutController, productViewController, cartViewController, userPassRecoveryViewController, uploaderController} = viewsController
 
 viewsRouter.get('/userRegistration', userRegistrationViewController)
 
@@ -17,5 +17,7 @@ viewsRouter.get('/products', passport.authenticate('jwtAuth', {session:false}), 
 viewsRouter.get('/carts/:cid', passport.authenticate('jwtAuth', {session:false}), userpolicies(['PREMIUM','USUARIO']), cartViewController)
 
 viewsRouter.get('/userPassRecovery', userPassRecoveryViewController)
+
+viewsRouter.get('/uploads', uploaderController)
 
 export default viewsRouter

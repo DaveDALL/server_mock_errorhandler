@@ -29,11 +29,16 @@ const userPassRecoveryViewController = (req, res) => {
     res.render('recovery', {})
 }
 
+const uploaderController = (req, res) =>{
+    res.render('uploads', {})
+}
+
 export default {
     userRegistrationViewController,
     userLoginController,
     userLogoutController,
     productViewController,
     cartViewController,
-    userPassRecoveryViewController
+    userPassRecoveryViewController,
+    uploaderController
 }

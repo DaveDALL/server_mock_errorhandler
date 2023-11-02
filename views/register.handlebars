@@ -8,9 +8,13 @@
     <div class="col-2"></div>
     <div class="col-8 container">
         <form action="/authRegistration" method="post">
+            <label for="userName"><strong>Introduzca su primer nombre</strong></label>
             <input type="text" name="userName" id="userName" onkeyup="lowerCaseConvert(this)" placeholder="Introduzca su nombre">
+            <label for="lastName"><strong>Introduzca su apellido</strong></label>
             <input type="text" name="lastName" id="lastName" onkeyup="lowerCaseConvert(this)" placeholder="Introduzca su apellido">
+            <label for="userMail"><strong>Introduzca su correo</strong></label>
             <input type="email" name="userMail" id="userMail" placeholder="Introduzca su correo">
+            <label for="userPassword"><strong>Introduzca una contraseña</strong></label>
             <input type="password" name="userPassword" id="userPassword" placeholder="Introduzca su contraseña">
             <input type="submit" value="Enviar">
     </form>
