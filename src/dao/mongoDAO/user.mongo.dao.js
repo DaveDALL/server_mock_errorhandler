@@ -127,4 +127,23 @@ export class UserMongoDAO {
             throw new Error('No fue posible actualizar la contraseña del usuario', {cause: err})
         }
     }
+
+    async saveDocuments (mail, documents) {
+        try {
+            let saveDocumentsResult = await User.updateOne({'userMail': mail}, {$set: {documents: documents}})
+            if(saveDocumentsResult) {
+                return saveDocumentsResult
+            } else return {}
+        }catch(err) {
+            throw new Error('No fue posible almacenar los documentos', {cause: err})
+        }
+    }
+
+    async lastConnectionUpdate (mail) {
+        try {
+            await User.findOneAndUpdate({'userMail': mail}, {last_connection: new Date(0)})
+        }catch(err) {
+            throw new Error('No fue posible actualizar la ultima conexión', {cause: err})
+        }
+    }
 }

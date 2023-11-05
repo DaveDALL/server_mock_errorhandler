@@ -20,16 +20,23 @@ const getUserByEmailService = async (mail) => {
     }
 }
 
-const updateUserRollService = async (uid, actualRoll) => {
+const updateUserRollService = async (uid, email, actualRoll) => {
     try{
-        let updateUserResult = await UserDAO.updateUserRoll(uid, actualRoll)
-        if(updateUserResult) {
-            return updateUserResult
-        }else {
-            logger.debug('No fue posible actualizar el usuario en MongoDB')
-            return {}
+        let user = await UserDAO.getUserByEmail(email)
+        let documents = user[0].documents
+        console.log(documents)
+        if(documents.length < 3 && actualRoll == 'USUARIO') {
+            logger.warning('No se cuenta con todos los documentos requeridos')
+            return null
+        } else {
+            let updateUserResult = await UserDAO.updateUserRoll(uid, actualRoll)
+            if(updateUserResult) {
+                return updateUserResult
+            }else {
+                logger.debug('No fue posible actualizar el usuario en MongoDB')
+                return null
+            }
         }
-        
     }catch(err) {
         throw new Error('Error al actualizar el roll del usuario con mongoose ', {cause: err})
     }
@@ -107,10 +114,36 @@ const userPassChangeService = async (link, userPassMain, userPassSecond) => {
     }
 }
 
+const documentsService = async (mail, documents) => {
+    try {
+        let saveDocumentsResult = await UserDAO.saveDocuments(mail, documents)
+        if(saveDocumentsResult) {
+            return saveDocumentsResult
+        } else {
+            logger.debug('No fue posible almacenar los documentos en MongoDB')
+            return {}
+        }
+    }catch(err) {
+        logger.warning('No fue posible almacenar los documentos en MongoDB con el servicio')
+        throw new Error('No fue posible almacenar los documentos en MongoDB con el servicio', {cause: err})
+    }
+}
+
+const lastConnectionUpdateService = async (mail) => {
+    try {
+        await UserDAO.lastConnectionUpdate(mail)
+    }catch(err) {
+        logger.warning('No fue posible hacer logout de usuario con el servicio')
+        throw new Error('No fue posible hacer logout de usuario con el servicio', {cause: err})
+    }
+}
+
 export default {
     getUserByEmailService,
     updateUserRollService,
     userMailPassRecoveryService,
     userLinkVerifyService,
-    userPassChangeService
+    userPassChangeService,
+    documentsService,
+    lastConnectionUpdateService,
 }

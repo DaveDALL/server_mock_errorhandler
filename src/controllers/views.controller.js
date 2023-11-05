@@ -1,5 +1,7 @@
 import CONFIG from '../../config/config.env.js'
+import userService from '../services/user.service.js'
 const {PORT} = CONFIG
+const { getUserByEmailService, lastConnectionUpdateService } = userService
 
 const userRegistrationViewController = (req, res) => {
     res.render('register', {})
@@ -9,11 +11,17 @@ const userLoginController = (req, res) => {
     res.render('login', {})
 }
 
-const userLogoutController = (req, res) => {
-    req.session.destroy (err => {
-        if(err) res.send('Problemas con el logout!!')
-        res.clearCookie('jwtCookie').redirect('/')
-    })
+const userLogoutController = async (req, res) => {
+    try {
+        let { userMail } = req.session
+        await lastConnectionUpdateService(userMail)
+        req.session.destroy (err => {
+            if(err) res.send('Problemas con el logout!!')
+            res.clearCookie('jwtCookie').redirect('/')
+        })
+    }catch(err) {
+
+    }
 }
 
 const productViewController = (req, res) => {
@@ -29,8 +37,11 @@ const userPassRecoveryViewController = (req, res) => {
     res.render('recovery', {})
 }
 
-const uploaderController = (req, res) =>{
-    res.render('uploads', {})
+const uploaderController = async (req, res) =>{
+    let { userMail } = req.session
+    let user = await getUserByEmailService(userMail)
+    let userId = user[0]._id
+    res.render('uploads', {userId: userId})
 }
 
 export default {

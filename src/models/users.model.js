@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema({
 },
 {
     timestamps: {
-        createdAt: false,
+        createdAt: 'creation_date',
         updatedAt: 'last_connection',
     }
 },

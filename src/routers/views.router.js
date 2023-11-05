@@ -18,6 +18,6 @@ viewsRouter.get('/carts/:cid', passport.authenticate('jwtAuth', {session:false})
 
 viewsRouter.get('/userPassRecovery', userPassRecoveryViewController)
 
-viewsRouter.get('/uploads', uploaderController)
+viewsRouter.get('/uploads', passport.authenticate('jwtAuth', {session:false}), userpolicies(['PREMIUM','USUARIO']), uploaderController)
 
 export default viewsRouter

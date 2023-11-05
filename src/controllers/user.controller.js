@@ -2,7 +2,7 @@ import userService from '../services/user.service.js'
 import CustomizedError from '../utils/errorHandler/errorHandler.customErrors.js'
 import EError from '../utils/errorHandler/errorHandler.enums.js'
 import { generateErrorInfo } from '../utils/errorHandler/errorHandler.info.js'
-const { getUserByEmailService, updateUserRollService, userMailPassRecoveryService, userLinkVerifyService, userPassChangeService } = userService
+const { getUserByEmailService, updateUserRollService, userMailPassRecoveryService, userLinkVerifyService, userPassChangeService, documentsService } = userService
 
 const getUserByEmailController = async (req, res, next) => {
     try{
@@ -44,8 +44,11 @@ const updateUserRollController = async (req, res, next) => {
                 code: EError.USER_INVALID_DATA_ERROR
             })
         }
-        let updateUserResult = await updateUserRollService(uid, req.user.roll)
-        res.status(200).send({status: 'success', payload: updateUserResult})
+        let updateUserResult = await updateUserRollService(uid, req.user.email, req.user.roll)
+        console.log(updateUserResult)
+        if(updateUserResult) {
+            return res.status(200).send({status: 'success', payload: updateUserResult})
+        } else return res.status(400).send({status: 'Error', error: 'No se cuentan con los documentos para realizar el cambio a Premium'})
     }catch(err) {
         req.logger.warning(`No es posible actualizar el roll del usuario con el servicio`)
         next(err)
@@ -136,10 +139,40 @@ const userPassChangeController = async (req, res, next) => {
     }
 }
 
+const uploadDocsController = async (req, res, next) => {
+    let { userMail } = req.session
+    if(!req.files) {
+        CustomizedError.createError({
+            name: 'Error al subir los documentos',
+            cause: generateErrorInfo(EError.USER_INVALID_DATA_ERROR, 'Error al subir docuemntos'),
+            message: 'No fue posible subir sus documentos correctamente',
+            code: EError.USER_INVALID_DATA_ERROR
+        })
+        return res.status(400).send({status: 'Error', error: 'No fue posible subir los docuemntos'})
+    }else {
+        try {
+            let documents = [
+                {docName: req.files.idDocument[0].filename, reference: req.files.idDocument[0].destination},
+                {docName: req.files.addressProof[0].filename, reference: req.files.addressProof[0].destination},
+                {docName: req.files.accountStatement[0].filename, reference: req.files.accountStatement[0].destination}
+            ]
+            let documentsResult = await documentsService(userMail, documents)
+            if(documentsResult) {
+                return res.status(201).send({status: 'Success', payload: 'Los documentos se almacenaron con éxito'})
+            } else return res.status(400).send({status: 'Error', error: 'No fue posible almacenar los docuemntos'})
+        }catch(err) {
+            req.logger.warning(`No es posible subir sus documentos con el servicio`)
+            next(err)
+        }
+    }
+
+}
+
 export default {
     getUserByEmailController,
     updateUserRollController,
     userMailPassRecoveryController,
     userPassLinkRecoveryController,
-    userPassChangeController
+    userPassChangeController,
+    uploadDocsController
 }
