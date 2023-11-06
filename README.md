@@ -1,4 +1,4 @@
-# SERVIDOR EN CAPAS COMPLETO CON TICKETS CONTROL DE ERRORES, LOGGER Y RECUPERACION DE CONTRASEÑA
+# SERVIDOR EN CAPAS COMPLETO CON TICKETS CONTROL DE ERRORES, LOGGER Y RECUPERACION DE CONTRASEÑA MAS MULTER
 
 El propósito de este proyecto es realizar un servidor completo por capas; que cuente con la posibilidad de crear un ticket de compra, y proveer del manejo de errores.
 
@@ -740,6 +740,52 @@ El endpoint se encuentra en la dirección **http://localhost:PUERTO/api/loggerTe
 Lo que realiza el endpoint es la suma de numeros enteros, que llegan a través de los query params, y se espera recibir los parámetros **num1, num2 y num3**, de la forma **http://localhost:PUERTO/api/loggerTest?num1=NUMERO1&num2=NUMERO2&num3=NUMERO3**.
 
 en caso de que falte algún número, dos numeros, o todos, o se coloque cadenas de caracteres arrojaran el mensaje correspndiente. Cuando se envian numeros enteros, se realiza la suma y el endpoint envia el payload con la suma.
+
+
+## MULTER
+
+A través de multer js se crea una vista para subir archivo llamada **uploads**, tanto el avatar, imagenes de los productos (que puede agregar solo el usuario premium), y los documentos de comprobación para ser usuario premium (ID, comporbante de domicilio y estado de cuenta)
+
+En archivo handlebars de la vista de uploads, se crean los formurarios correspondiente que realizaran el método post hacia el endpoint que tiene el middleware de multer para realizar la subida de archivos.
+
+Actualemente esta mendiente el desarrollo para cargar el avartar y las imagenes de productos, estando ya en funcionamiento el middleware que carga los archivos de comprobación para ser usuario premium. El endpint se encuentra en **/api/users/:cid/documents**
+
+Lo que hara el middleware es crear primero un folder con id de usuario, y posteriormente creará el folder de documents. Una vez creados os folders, se asinará los nombres de los archivo tomando en cuenta el nombre del tag input; de acuerdo a la siguiente **nomenclatura: uid_nombre del input_fecha.extension**. Los nombres de los campos corresponde al tipo del comprobante, Id con nombre idDocument, el de comporbante de domicilio como addressProof, y el estado de cuenta como accountStatement. La extension se obtiene del tipo mime del archivo que se subirá.
+
+Quedando el document storage de multer de la siguiente forma
+
+```javascript
+
+const documentStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        let { uid } = req.params
+        let mainDir = `${__dirname}/public/customerInfo/${uid}`
+        let existMainDir = fs.existsSync(mainDir)
+        if(!existMainDir) {
+            fs.mkdirSync(mainDir)
+        }
+        let secondDir = `${__dirname}/public/customerInfo/${uid}/documents`
+        let existSecondDir = fs.existsSync(secondDir)
+        if(!existSecondDir){
+            fs.mkdirSync(secondDir)
+        }
+        return cb(null, secondDir)
+    },
+    filename: (req, file, cb) => {
+        const { uid } = req.params
+        let extArray = file.mimetype.split('/')
+        let extension = extArray[1]
+        let fileName = `${uid}_${file.fieldname}_${Date.now()}.${extension}`
+        cb(null, fileName)
+    }
+})
+
+```
+
+NOTA: Para suber a usuario premium, es necesario que el usuario estandar haya subido los documentos de comprobación, ya existe um middleware que al momento de cambiar de usuario estandar a premium realiza antes esta comprobación y no se cuenta con la documentación no se podrá realizar el cambio de usuario; el cual apunta hacia el endpoint **/api/users/premium/:uid**
+
+
+
 
 # FIN
  
